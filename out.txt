@@ -1,0 +1,48 @@
+FAIL src/input_method/InputController.test.ts
+  ΓùÅ Test suite failed to run
+
+    src/input_method/InputController.test.ts:102:32 - error TS2554: Expected 2 arguments, but got 0.
+
+    102         const inputtingState = new InputtingState();
+                                       ~~~~~~~~~~~~~~~~~~~~
+
+      src/input_method/InputState.ts:17:15
+        17   constructor(readonly utf16Code: number[], readonly consonantIndexes: number[]) {
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        An argument for 'utf16Code' was not provided.
+    src/input_method/InputController.test.ts:103:24 - error TS2540: Cannot assign to 'composingBuffer' because it is a read-only property.
+
+    103         inputtingState.composingBuffer = 'test_buffer';
+                               ~~~~~~~~~~~~~~~
+    src/input_method/InputController.test.ts:132:32 - error TS2554: Expected 2 arguments, but got 0.
+
+    132         const inputtingState = new InputtingState();
+                                       ~~~~~~~~~~~~~~~~~~~~
+
+      src/input_method/InputState.ts:17:15
+        17   constructor(readonly utf16Code: number[], readonly consonantIndexes: number[]) {
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        An argument for 'utf16Code' was not provided.
+    src/input_method/InputController.test.ts:133:24 - error TS2540: Cannot assign to 'composingBuffer' because it is a read-only property.
+
+    133         inputtingState.composingBuffer = 'pending_commit';
+                               ~~~~~~~~~~~~~~~
+    src/input_method/InputController.test.ts:154:32 - error TS2554: Expected 2 arguments, but got 0.
+
+    154         const inputtingState = new InputtingState();
+                                       ~~~~~~~~~~~~~~~~~~~~
+
+      src/input_method/InputState.ts:17:15
+        17   constructor(readonly utf16Code: number[], readonly consonantIndexes: number[]) {
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        An argument for 'utf16Code' was not provided.
+    src/input_method/InputController.test.ts:155:24 - error TS2540: Cannot assign to 'composingBuffer' because it is a read-only property.
+
+    155         inputtingState.composingBuffer = '';
+                               ~~~~~~~~~~~~~~~
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.112 s
+Ran all test suites matching src/input_method/InputController.test.ts.
