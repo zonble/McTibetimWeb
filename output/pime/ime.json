@@ -1,0 +1,14 @@
+{
+  "name": "小麥族語 (PIME)",
+  "version": "0.4.4",
+  "guid": "{27c57701-b6b9-4bef-983a-fa7737245075}",
+  "locale": "zh-Hant-TW",
+  "fallbackLocale": "zh-TW",
+  "icon": "icon.ico",
+  "win8_icon": "",
+  "moduleName": "index",
+  "serviceName": "",
+  "configTool": "..\\..\\..\\python3\\pythonw.exe",
+  "configToolParams": "config_tool.py",
+  "configToolDir": "."
+}
