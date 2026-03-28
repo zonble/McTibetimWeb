@@ -7,7 +7,7 @@
  */
 
 import { InputController } from './input_method';
-import { InputTableManager } from './data';
+import { LayoutManager } from './layout';
 import { InputUI } from './input_method/InputUI';
 import { KeyFromKeyboardEvent, VK_Keys } from './pime_keys';
 import path from 'path';
@@ -16,8 +16,7 @@ import process from 'process';
 import child_process from 'child_process';
 
 interface Settings {
-  selected_input_table_index: number;
-  candidate_font_size: number;
+  selected_layout: string;
 }
 
 /**
@@ -45,8 +44,7 @@ interface UiState {
 
 /**  The default settings. */
 const defaultSettings: Settings = {
-  selected_input_table_index: 0,
-  candidate_font_size: 16,
+  selected_layout: '',
 };
 
 /**
@@ -58,8 +56,7 @@ enum PimeMcTibetimCommand {
   SwitchLanguage = 1,
   OpenHomepage = 2,
   OpenBugReport = 3,
-  OpenOptions = 4,
-  Help = 10,
+  InputTable = 10000,
 }
 
 /** Wraps InputController and required states.  */
@@ -100,16 +97,14 @@ class PimeMcTibetim {
   }
 
   /** Resets the input controller. */
-  /** Resets the input controller. */
   public resetController(): void {
     this.inputController.reset();
   }
 
   /** Applies the settings to the input controller. */
-  /** Applies the settings to the input controller. */
   public applySettings(): void {
-    const selectedLayout = this.settings.selected_input_table_index;
-    InputTableManager.getInstance().selectedIndexValue = selectedLayout;
+    const selectedLayout = this.settings.selected_layout;
+    this.inputController.selectLayoutById(selectedLayout);
   }
 
   readonly pimeUserDataPath: string = path.join(process.env.APPDATA || '', 'PIME');
@@ -156,7 +151,6 @@ class PimeMcTibetim {
   }
 
   /** Write settings to disk */
-  /** Write settings to disk */
   public writeSettings() {
     if (!fs.existsSync(this.mctibetimUserDataPath)) {
       console.log('User data folder not found, creating ' + this.mctibetimUserDataPath);
@@ -200,9 +194,9 @@ class PimeMcTibetim {
         };
       },
       commitString(text: string) {
-        console.log('commitString: ' + text);
+        // console.log('commitString: ' + text);
         const joinedCommitString = instance.uiState.compositionString + text;
-        console.log('joinedCommitString: ' + joinedCommitString);
+        // console.log('joinedCommitString: ' + joinedCommitString);
         instance.uiState = {
           commitString: joinedCommitString,
           compositionString: '',
@@ -217,11 +211,15 @@ class PimeMcTibetim {
       update(stateString: string) {
         const state = JSON.parse(stateString);
         const composingBuffer = state.composingBuffer;
-        const candidates = state.candidates;
+        let candidates = state.candidates;
+        if (candidates === undefined) {
+          candidates = [];
+        }
+
         let selectedIndex = 0;
         let index = 0;
         const candidateList = [];
-        for (let candidate of state.candidates) {
+        for (let candidate of candidates) {
           if (candidate.selected) {
             selectedIndex = index;
           }
@@ -287,7 +285,7 @@ class PimeMcTibetim {
           id: 'windows-mode-icon',
           icon: windowsModeIconPath,
           commandId: PimeMcTibetimCommand.ModeIcon,
-          tooltip: '輸入模式切換',
+          tooltip: 'Toggle Input Mode',
         });
       }
 
@@ -295,13 +293,13 @@ class PimeMcTibetim {
         id: 'switch-lang',
         icon: windowsModeIconPath,
         commandId: PimeMcTibetimCommand.SwitchLanguage,
-        tooltip: '輸入模式切換',
+        tooltip: 'Toggle Input Mode',
       });
       addButton.push({
         id: 'settings',
         icon: settingsIconPath,
         type: 'menu',
-        tooltip: '設定',
+        tooltip: 'Settings',
       });
       object.addButton = addButton;
       this.alreadyAddButton = true;
@@ -318,21 +316,14 @@ class PimeMcTibetim {
    * @returns The custom UI response.
    */
   public customUiResponse(): any {
-    let fontSize = this.settings.candidate_font_size;
-    if (fontSize === undefined) {
-      fontSize = 16;
-    } else if (fontSize < 10) {
-      fontSize = 10;
-    } else if (fontSize > 32) {
-      fontSize = 32;
-    }
+    let fontSize = 12;
 
     return {
       openKeyboard: this.isOpened,
       customizeUI: {
         candPerRow: 1,
         candFontSize: fontSize,
-        candFontName: 'Microsoft YaHei',
+        candFontName: 'Microsoft Himalaya',
         candUseCursor: true,
       },
       setSelKeys: '123456789',
@@ -344,11 +335,18 @@ class PimeMcTibetim {
    * Handles a command.
    * @param id The command ID.
    */
-  /**
-   * Handles a command.
-   * @param id The command ID.
-   */
   public handleCommand(id: PimeMcTibetimCommand): void {
+    if (id >= PimeMcTibetimCommand.InputTable) {
+      const inputMethodIndex = id - PimeMcTibetimCommand.InputTable;
+      const manager = LayoutManager.getInstance();
+      const layouts = manager.layouts;
+      const layoutId = layouts[inputMethodIndex].layoutId;
+      this.settings.selected_layout = layoutId;
+      this.inputController.selectLayoutById(layoutId);
+      this.writeSettings();
+      return;
+    }
+
     switch (id) {
       case PimeMcTibetimCommand.ModeIcon:
         break;
@@ -366,25 +364,6 @@ class PimeMcTibetim {
         {
           const url = 'https://github.com/openvanilla/McTibetimWeb/issues';
           const command = `start ${url}`;
-          console.log('Run ' + command);
-          child_process.exec(command);
-        }
-        break;
-      case PimeMcTibetimCommand.OpenOptions:
-        {
-          const python3 = path.join(__dirname, '..', '..', '..', 'python', 'python3', 'python.exe');
-          const script = path.join(__dirname, 'config_tool.py');
-          const command = `"${python3}" "${script}"`;
-          console.log('Run ' + command);
-          child_process.exec(command);
-        }
-        break;
-
-      case PimeMcTibetimCommand.Help:
-        {
-          let python3 = path.join(__dirname, '..', '..', '..', 'python', 'python3', 'python.exe');
-          const script = path.join(__dirname, 'config_tool.py');
-          const command = `"${python3}" "${script}" help`;
           console.log('Run ' + command);
           child_process.exec(command);
         }
@@ -595,27 +574,33 @@ module.exports = {
     }
 
     if (request.method === 'onMenu') {
-      const menu = [
+      let menu: any[] = [
         {
-          text: '小麥注音輸入法網站',
+          text: 'Homepage',
           id: PimeMcTibetimCommand.OpenHomepage,
         },
         {
-          text: '問題回報',
+          text: 'Issue Tracker',
           id: PimeMcTibetimCommand.OpenBugReport,
         },
-        {
-          text: '輔助說明',
-          id: PimeMcTibetimCommand.Help,
-        },
         {},
-        {
-          text: '偏好設定 (&O)',
-          id: PimeMcTibetimCommand.OpenOptions,
-        },
-        {},
-        { text: '小麥族語輸入法 0.4.4' },
       ];
+      const manager = LayoutManager.getInstance();
+      const layouts = manager.layouts;
+
+      for (let i = 0; i < layouts.length; i++) {
+        const layout = layouts[i];
+        const tableId = layout.layoutId;
+        const text = layout.layoutName;
+        menu.push({
+          text: text,
+          checked: tableId === pimeMcTibetim.settings.selected_layout,
+          id: PimeMcTibetimCommand.InputTable + i,
+        });
+      }
+
+      menu.push({});
+      menu.push({ text: 'McTibetim 0.1.0' });
       const response = Object.assign({}, responseTemplate, { return: menu });
       return response;
     }

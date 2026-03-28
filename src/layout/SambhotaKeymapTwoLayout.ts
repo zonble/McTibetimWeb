@@ -1,6 +1,6 @@
-import PhoneticLayout from './PhoneitcLayout';
+import StackingLayout from './StackingLayout';
 
-export default class SambhotaKeymapTwoLayout extends PhoneticLayout {
+export default class SambhotaKeymapTwoLayout extends StackingLayout {
   get layoutId(): string {
     return 'sambhota_keymap_two';
   }

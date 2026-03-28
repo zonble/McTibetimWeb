@@ -7,7 +7,7 @@ import {
 } from '../input_method/InputState';
 import Layout from './Layout';
 
-export default abstract class PhoneticLayout extends Layout {
+export default abstract class StackingLayout extends Layout {
   abstract get composeKey(): string;
   abstract get spaceKey(): string;
   abstract get symbolKeyMapping(): string[];
@@ -74,7 +74,7 @@ export default abstract class PhoneticLayout extends Layout {
   ]);
 
   static IsHtransformConsonantIndex(index: number): [boolean, number] {
-    const idx = PhoneticLayout.HtransformKey.indexOf(index);
+    const idx = StackingLayout.HtransformKey.indexOf(index);
     return [idx >= 0, idx];
   }
 
@@ -118,10 +118,7 @@ export default abstract class PhoneticLayout extends Layout {
     const [isFinalAdditional, finalAdditionalIndex] = this.isFinalAdditional(key);
     if (isFinalAdditional) {
       if (state instanceof StackingState) {
-        return true;
-      }
-      if (state instanceof InputtingState) {
-        const coder = PhoneticLayout.FinalAddChars[finalAdditionalIndex];
+        const coder = StackingLayout.FinalAddChars[finalAdditionalIndex];
         const codes = state.utf16Code.concat(coder);
         const buffer = String.fromCharCode(...codes);
         stateCallback(new CommittingState(buffer));
@@ -133,10 +130,10 @@ export default abstract class PhoneticLayout extends Layout {
     const [isSymbol, symbolIndex] = this.isSymbol(key);
     if (isSymbol) {
       let codes: number[] = [];
-      if (state instanceof InputtingState) {
+      if (state instanceof StackingState) {
         codes = state.utf16Code;
       }
-      const code = PhoneticLayout.SymbolChars[symbolIndex];
+      const code = StackingLayout.SymbolChars[symbolIndex];
       codes.push(code);
       const buffer = String.fromCharCode(...codes);
       stateCallback(new CommittingState(buffer));
@@ -146,20 +143,18 @@ export default abstract class PhoneticLayout extends Layout {
     // Vowels
     var [isVowel, vowelIndex] = this.isVowel(key);
     if (isVowel) {
+      const code = StackingLayout.VowelChars[vowelIndex];
+      if (code === 0) {
+        return true;
+      }
       let codes: number[] = [];
-      if (state instanceof InputtingState) {
-        codes = state.utf16Code;
-      } else if (state instanceof StackingState) {
+      if (state instanceof StackingState) {
         const codesFromState = state.utf16Code;
         if (state.consonantIndexes.length > 2) {
           codes = codesFromState;
         }
       }
 
-      const code = PhoneticLayout.VowelChars[vowelIndex];
-      if (code === 0) {
-        return true;
-      }
       codes.push(code);
       const buffer = String.fromCharCode(...codes);
       stateCallback(new CommittingState(buffer));
@@ -172,23 +167,23 @@ export default abstract class PhoneticLayout extends Layout {
     let [isConsonant, consonantIndex] = this.isConsonant(key);
     if (isConsonant) {
       if (state instanceof StackingState) {
-        if (state.consonantIndexes.length >= PhoneticLayout.MaxStackingConsonants) {
+        if (state.consonantIndexes.length >= StackingLayout.MaxStackingConsonants) {
           errorCallback();
           return true;
         }
 
         // kb transform
-        if (consonantIndex === PhoneticLayout.KbTransform) {
+        if (consonantIndex === StackingLayout.KbTransform) {
           let codes: number[] = [];
           let indexes = state.consonantIndexes;
           if (indexes.length < 2) {
             codes.push(0x0f69);
           } else {
-            const [isHatransform, htransformIndex] = PhoneticLayout.IsHtransformConsonantIndex(
+            const [isHatransform, htransformIndex] = StackingLayout.IsHtransformConsonantIndex(
               indexes[0],
             );
-            if (isHatransform && indexes[1] === PhoneticLayout.Htransform) {
-              const code = PhoneticLayout.HtransformChars[htransformIndex];
+            if (isHatransform && indexes[1] === StackingLayout.Htransform) {
+              const code = StackingLayout.HtransformChars[htransformIndex];
               codes.push(code);
             } else if (
               indexes[0] === 0 && // ka
@@ -196,10 +191,10 @@ export default abstract class PhoneticLayout extends Layout {
             ) {
               codes.push(0x0fb9); // kssa
             } else {
-              const firstCode = PhoneticLayout.ConsonantChars[indexes[0]];
+              const firstCode = StackingLayout.ConsonantChars[indexes[0]];
               codes.push(firstCode);
               if (indexes.length === 3) {
-                const secondCode = PhoneticLayout.ConsonantChars[indexes[1]];
+                const secondCode = StackingLayout.ConsonantChars[indexes[1]];
                 codes.push(secondCode);
               }
               const finalCode = 0x0fb9;
@@ -213,21 +208,21 @@ export default abstract class PhoneticLayout extends Layout {
         }
 
         // H transform
-        if (consonantIndex === PhoneticLayout.Htransform) {
+        if (consonantIndex === StackingLayout.Htransform) {
           let codes: number[] = [];
           let indexes = state.consonantIndexes;
-          const [isHatransform, htransformIndex] = PhoneticLayout.IsHtransformConsonantIndex(
+          const [isHatransform, htransformIndex] = StackingLayout.IsHtransformConsonantIndex(
             indexes[indexes.length - 1],
           );
           if (isHatransform) {
             if (indexes.length < 2) {
-              const code = PhoneticLayout.HtransformChars[htransformIndex];
+              const code = StackingLayout.HtransformChars[htransformIndex];
               codes.push(code);
             } else {
               const [isFirstHatransform, firstHtransformIndex] =
-                PhoneticLayout.IsHtransformConsonantIndex(indexes[0]);
+                StackingLayout.IsHtransformConsonantIndex(indexes[0]);
               if (isFirstHatransform && indexes[1] === htransformIndex) {
-                const code = PhoneticLayout.HtransformChars[firstHtransformIndex];
+                const code = StackingLayout.HtransformChars[firstHtransformIndex];
                 codes.push(code);
               } else if (
                 indexes[0] === 0 && // ka
@@ -236,16 +231,16 @@ export default abstract class PhoneticLayout extends Layout {
                 const code = 0x0fb9; // kssa
                 codes.push(code);
               } else {
-                const firstCode = PhoneticLayout.ConsonantChars[indexes[0]];
+                const firstCode = StackingLayout.ConsonantChars[indexes[0]];
                 codes.push(firstCode);
                 if (indexes.length === 3) {
-                  const secondCode = PhoneticLayout.ConsonantChars[indexes[1]];
+                  const secondCode = StackingLayout.ConsonantChars[indexes[1]];
                   codes.push(secondCode);
                 }
                 const finalCode = 0x0fb9;
                 codes.push(finalCode);
               }
-              let code = PhoneticLayout.HtransformChars[htransformIndex] + 0x50;
+              let code = StackingLayout.HtransformChars[htransformIndex] + 0x50;
               codes.push(code);
             }
             indexes.push(consonantIndex);
@@ -257,12 +252,12 @@ export default abstract class PhoneticLayout extends Layout {
         {
           let codes: number[] = state.utf16Code;
           let indexes = state.consonantIndexes;
-          let code = PhoneticLayout.ConsonantChars[consonantIndex];
+          let code = StackingLayout.ConsonantChars[consonantIndex];
           if (indexes.length > 0) {
             if (consonantIndex === 22) {
               code = 0x0f71;
             } else {
-              code = 0x50 + PhoneticLayout.ConsonantChars[consonantIndex];
+              code = 0x50 + StackingLayout.ConsonantChars[consonantIndex];
             }
           }
           codes.push(code);
@@ -272,13 +267,13 @@ export default abstract class PhoneticLayout extends Layout {
         }
         return true;
       } else {
-        let code = PhoneticLayout.ConsonantChars[consonantIndex];
+        let code = StackingLayout.ConsonantChars[consonantIndex];
         const buffer = String.fromCharCode(code);
         stateCallback(new CommittingState(buffer));
         return true;
       }
     }
-    const extra = PhoneticLayout.Extras.get(key);
+    const extra = StackingLayout.Extras.get(key);
     if (extra) {
       stateCallback(new CommittingState(extra));
       return true;

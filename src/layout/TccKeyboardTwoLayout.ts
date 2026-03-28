@@ -1,6 +1,6 @@
-import PhoneticLayout from './PhoneitcLayout';
+import StackingLayout from './StackingLayout';
 
-export default class TccKeyboardTwoLayout extends PhoneticLayout {
+export default class TccKeyboardTwoLayout extends StackingLayout {
   get layoutId(): string {
     return 'tcc_keyboard_two';
   }

@@ -11,20 +11,33 @@ export class CommittingState extends InputState {
   }
 }
 
-export class InputtingState extends InputState {
-  readonly composingBuffer: string;
+export abstract class InputtingState extends InputState {
+  abstract get composingBuffer(): string;
+  abstract get cursorIndex(): number;
+  abstract get utf16Code(): number[];
+}
 
-  constructor(readonly utf16Code: number[], readonly consonantIndexes: number[]) {
+export class StackingState extends InputtingState {
+  private composingBuffer_: string;
+  private _utf16Code: number[];
+  get composingBuffer(): string {
+    return this.composingBuffer_;
+  }
+
+  get utf16Code(): number[] {
+    return this._utf16Code;
+  }
+
+  constructor(utf16Code: number[], readonly consonantIndexes: number[]) {
     super();
-    this.composingBuffer = String.fromCharCode(...utf16Code);
+    this._utf16Code = utf16Code;
+    this.composingBuffer_ = String.fromCharCode(...utf16Code);
   }
 
   get cursorIndex(): number {
     return this.composingBuffer.length;
   }
-}
 
-export class StackingState extends InputtingState {
   get tooltip(): string {
     return 'Stacking characters.';
   }

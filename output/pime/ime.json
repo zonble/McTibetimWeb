@@ -1,14 +1,11 @@
 {
-  "name": "小麥族語 (PIME)",
-  "version": "0.4.4",
-  "guid": "{27c57701-b6b9-4bef-983a-fa7737245075}",
-  "locale": "zh-Hant-TW",
-  "fallbackLocale": "zh-TW",
+  "name": "McTibetim (PIME)",
+  "version": "0.1.0",
+  "guid": "{6dd210a2-b34a-4747-8e5b-f93fc3e56873}",
+  "locale": "bo-CN",
+  "fallbackLocale": "bo-CN",
   "icon": "icon.ico",
   "win8_icon": "",
   "moduleName": "index",
-  "serviceName": "",
-  "configTool": "..\\..\\..\\python3\\pythonw.exe",
-  "configToolParams": "config_tool.py",
-  "configToolDir": "."
+  "serviceName": ""
 }

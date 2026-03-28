@@ -66,7 +66,7 @@ describe('InputController', () => {
         mockKey,
         expect.any(EmptyState),
         expect.any(Function),
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(result).toBe(true);
     });
@@ -99,19 +99,19 @@ describe('InputController', () => {
       expect(controller.state).toBeInstanceOf(EmptyState);
     });
 
-      it('should handle transition to InputtingState', () => {
-        mockKeyHandlerHandle.mockImplementation((key, state, stateCb) => {
-          const utf16Code = Array.from('test_buffer').map(c => c.charCodeAt(0));
-          const inputtingState = new InputtingState(utf16Code, []);
-          stateCb(inputtingState);
-          return true;
-        });
+    it('should handle transition to InputtingState', () => {
+      mockKeyHandlerHandle.mockImplementation((key, state, stateCb) => {
+        const utf16Code = Array.from('test_buffer').map((c) => c.charCodeAt(0));
+        const inputtingState = new (require('./InputState').StackingState)(utf16Code, []);
+        stateCb(inputtingState);
+        return true;
+      });
 
       controller.handle(Key.asciiKey('a'));
 
       expect(mockUI.reset).toHaveBeenCalled();
       expect(mockUI.update).toHaveBeenCalled();
-      
+
       // Update should be called with a JSON payload from InputUIStateBuilder
       // Since it's built internally, we just ensure it was called with a string containing the buffer
       const updateArg = mockUI.update.mock.calls[0][0];
@@ -131,13 +131,13 @@ describe('InputController', () => {
     it('should commit buffer and then reset UI if current state is InputtingState', () => {
       // Force it into InputtingState first
       mockKeyHandlerHandle.mockImplementation((key, state, stateCb) => {
-        const utf16Code = Array.from('pending_commit').map(c => c.charCodeAt(0));
-        const inputtingState = new InputtingState(utf16Code, []);
+        const utf16Code = Array.from('pending_commit').map((c) => c.charCodeAt(0));
+        const inputtingState = new (require('./InputState').StackingState)(utf16Code, []);
         stateCb(inputtingState);
         return true;
       });
       controller.handle(Key.asciiKey('a'));
-      
+
       // Clear mock calls to focus on reset behavior
       mockUI.reset.mockClear();
       mockUI.commitString.mockClear();
@@ -153,7 +153,7 @@ describe('InputController', () => {
 
     it('should not commit if composing buffer is empty in InputtingState', () => {
       mockKeyHandlerHandle.mockImplementation((key, state, stateCb) => {
-        const inputtingState = new InputtingState([], []);
+        const inputtingState = new (require('./InputState').StackingState)([], []);
         stateCb(inputtingState);
         return true;
       });
