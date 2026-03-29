@@ -14,6 +14,10 @@ export default class InputController {
     return this.state_;
   }
 
+  getCurrentKeyNames(shift: boolean, ctrl: boolean, alt: boolean): Map<string, string> {
+    return this.keyHandler_.getKeyNames(shift, ctrl, alt);
+  }
+
   /** Called when key handling reports an unrecoverable input error. */
   onError: () => void = () => {};
 

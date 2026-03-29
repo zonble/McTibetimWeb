@@ -49,6 +49,7 @@ export class Key {
   readonly ascii: string = '';
   /** Logical key name used by the input method state machine. */
   readonly name: KeyName = KeyName.UNKNOWN;
+  readonly code: string = '';
 
   /**
    * Creates an input-method key value.
@@ -63,15 +64,17 @@ export class Key {
     n: KeyName = KeyName.UNKNOWN,
     shiftPressed: boolean = false,
     ctrlPressed: boolean = false,
-    altPressed: boolean = false,
     isNumpadKey: boolean = false,
+      altPressed: boolean = false,
+    code: string = '',
   ) {
     this.ascii = c;
     this.name = n;
     this.shiftPressed = shiftPressed;
     this.ctrlPressed = ctrlPressed;
-    this.altPressed = altPressed;
     this.isNumpadKey = isNumpadKey;
+      this.altPressed = altPressed;
+    this.code = code;
   }
 
   /**
@@ -234,6 +237,14 @@ export function KeyFromKeyboardEvent(event: KeyboardEvent) {
       keyName = keyName;
       break;
   }
-  const key = new Key(event.key, keyName, event.shiftKey, event.ctrlKey, event.altKey, isNumpadKey);
+  const key = new Key(
+    event.key,
+    keyName,
+    event.shiftKey,
+    event.ctrlKey,
+    isNumpadKey,
+    event.altKey,
+    event.code,
+  );
   return key;
 }

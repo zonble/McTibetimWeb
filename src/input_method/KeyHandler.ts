@@ -6,12 +6,17 @@ import { CommittingState, EmptyState, InputState, InputtingState } from './Input
 import { Key, KeyName } from './Key';
 
 export class KeyHandler {
-  private layout: Layout = new SambhotaKeymapOneLayout();
+  private layout_: Layout = new SambhotaKeymapOneLayout();
+
   selectLayoutById(id: string) {
     const layout = LayoutManager.getInstance().getLayoutById(id);
     if (layout) {
-      this.layout = layout;
+      this.layout_ = layout;
     }
+  }
+
+  getKeyNames(shift: boolean, ctrl: boolean, alt: boolean): Map<string, string> {
+    return this.layout_.getKeyNames(shift, ctrl, alt);
   }
 
   handle(
@@ -20,6 +25,6 @@ export class KeyHandler {
     stateCallback: (state: InputState) => void,
     errorCallback: () => void,
   ): boolean {
-    return this.layout.handle(key, state, stateCallback, errorCallback);
+    return this.layout_.handle(key, state, stateCallback, errorCallback);
   }
 }

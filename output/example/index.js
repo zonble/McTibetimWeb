@@ -219,6 +219,8 @@
   });
 
   textarea.addEventListener('keydown', (event) => {
+    // console.log(event);
+
     if (isComposing || event.isComposing || event.keyCode === 229) {
       return;
     }
@@ -237,6 +239,132 @@
     controller.reset();
     resetUI();
   });
+
+  const screenKeyboard = (() => {
+    const api = {
+      isLock: false,
+      isShift: false,
+      isCtrl: false,
+    };
+
+    const Keyboard = window.SimpleKeyboard.default;
+    const keyboard = new Keyboard({
+      onKeyPress: (button) => handleKeyPress(button),
+    });
+
+    const defaultLayout = [
+      '` 1 2 3 4 5 6 7 8 9 0 - = {bksp}',
+      '{tab} q w e r t y u i o p [ ] \\',
+      "{lock} a s d f g h j k l ; ' {enter}",
+      '{shift} z x c v b n m , . / {shift}',
+      '{ctrl} {space}',
+    ];
+    const shiftLayout = [
+      '~ ! @ # $ % ^ & * ( ) _ + {bksp}',
+      '{tab} Q W E R T Y U I O P { } |',
+      '{lock} A S D F G H J K L : " {enter}',
+      '{shift} Z X C V B N M < > ? {shift}',
+      '{ctrl} {space}',
+    ];
+
+    function handleModifierButton(button) {
+      if (button === '{lock}') {
+        api.isLock = !api.isLock;
+      } else if (button === '{shift}') {
+        api.isShift = !api.isShift;
+      } else if (button === '{ctrl}') {
+        api.isCtrl = !api.isCtrl;
+      } else {
+        return false;
+      }
+      api.loadLayout();
+      return true;
+    }
+
+    function handleFallbackButton(button) {
+      if (button === '{enter}') {
+        ui.commitString('\n');
+      } else if (button === '{space}') {
+        ui.commitString(' ');
+      } else if (button === '{bksp}') {
+        ui.backspace();
+      }
+    }
+
+    function handleKeyPress(button) {
+      if (handleModifierButton(button)) {
+        return;
+      }
+
+      const handled = inputMethod.controller.handleSimpleKeyboardEvent(
+        button,
+        api.isShift || api.isLock,
+        api.isCtrl,
+      );
+      focusTextArea();
+
+      if (api.isShift) {
+        api.isShift = false;
+        api.loadLayout();
+      }
+      if (api.isCtrl) {
+        api.isCtrl = false;
+        api.loadLayout();
+      }
+      if (!handled) {
+        handleFallbackButton(button);
+      }
+    }
+
+    function buildKeyboardDisplay() {
+      const names = controller.getCurrentKeyNames(api.isShift || api.isLock, api.isCtrl, false);
+      console.log('Key names for current layout:', names);
+      const display = {
+        '{tab}': '⇥',
+        '{lock}': 'Lock',
+        '{shift}': '⇧ Shift',
+        '{bksp}': '⌫',
+        '{enter}': '↵',
+        '{space}': 'Space',
+        '{ctrl}': '⌃',
+      };
+      for (const [key, value] of names.entries()) {
+        console.log(key);
+        if (display[key] === undefined) {
+          display[key] = value;
+        }
+      }
+      return display;
+    }
+
+    function buildButtonTheme() {
+      const buttonTheme = [];
+      if (api.isLock) {
+        buttonTheme.push({ class: 'hg-button-active', buttons: '{lock}' });
+      }
+      if (api.isShift) {
+        buttonTheme.push({ class: 'hg-button-active', buttons: '{shift}' });
+      }
+      if (api.isCtrl) {
+        buttonTheme.push({ class: 'hg-button-active', buttons: '{ctrl}' });
+      }
+      return buttonTheme;
+    }
+
+    api.loadLayout = () => {
+      keyboard.setOptions({
+        display: buildKeyboardDisplay(),
+        layout: {
+          default: api.isShift || api.isLock ? shiftLayout : defaultLayout,
+        },
+        buttonTheme: buildButtonTheme(),
+      });
+    };
+
+    return api;
+  })();
+
+  screenKeyboard.loadLayout();
 })();
 
 document.getElementById('loading').innerText = '載入完畢！';

@@ -116,8 +116,9 @@ export class KeyMapping {
       keyName,
       event.shiftKey,
       event.ctrlKey,
-      event.altKey,
       isNumpadKey,
+      event.altKey,
+      event.code,
     );
     return key;
   }

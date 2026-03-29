@@ -456,3 +456,37 @@ textarea#text_area:focus ~ * #edit_area,
   font-size: 10pt;
   color: var(--text-secondary);
 }
+
+.simple-keyboard {
+  min-height: 230px;
+  margin-top: var(--spacing-2);
+  padding: 0;
+  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.hg-theme-default {
+  background: transparent !important;
+}
+
+.hg-button {
+  color: var(--text-primary) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  box-shadow: none !important;
+}
+
+.hg-standardBtn {
+  font-size: 26pt;
+}
+
+.hg-button[data-skbtn='{ctrl}'] {
+  flex-grow: 1 !important;
+  max-width: 80px;
+}
+
+.hg-button-active {
+  background: var(--accent) !important;
+  color: var(--accent-contrast) !important;
+}
