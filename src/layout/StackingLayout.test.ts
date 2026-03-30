@@ -83,16 +83,16 @@ describe('StackingLayout (via SambhotaKeymapOneLayout)', () => {
     });
   });
 
-  describe('isFinalAdditional', () => {
-    it('detects final additional %', () => {
-      const [isFinalAdditional, index] = layout.isFinalAdditional('%');
-      expect(isFinalAdditional).toBe(true);
+  describe('isSuffix', () => {
+    it('detects suffix %', () => {
+      const [isSuffix, index] = layout.isSuffix('%');
+      expect(isSuffix).toBe(true);
       expect(index).toBe(0);
     });
 
-    it('returns false for non-final-additional keys', () => {
-      const [isFinalAdditional] = layout.isFinalAdditional('k');
-      expect(isFinalAdditional).toBe(false);
+    it('returns false for non-suffix keys', () => {
+      const [isSuffix] = layout.isSuffix('k');
+      expect(isSuffix).toBe(false);
     });
   });
 
@@ -248,8 +248,8 @@ describe('StackingLayout (via SambhotaKeymapOneLayout)', () => {
     });
   });
 
-  describe('handle - final additional', () => {
-    it('commits final additional % in StackingState', () => {
+  describe('handle - suffix', () => {
+    it('commits suffix % in StackingState', () => {
       const stackingState = new StackingState([0x0f40], [0]);
       const key = Key.asciiKey('%');
       layout.handle(key, stackingState, stateCallback, errorCallback);

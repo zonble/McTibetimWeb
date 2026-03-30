@@ -44,5 +44,5 @@ export default class TccKeyboardOneLayout extends StackingLayout {
     'T',
   ];
   readonly vowelKeyMapping = [' ', 'g', 'j', 'n', 'b', 'B', 'N', 'G'];
-  readonly finalAdditionalKeyMapping = ['`', '*'];
+  readonly suffixKeyMapping = ['`', '*'];
 }

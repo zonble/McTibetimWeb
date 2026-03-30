@@ -44,5 +44,5 @@ export default class SambhotaKeymapOneLayout extends StackingLayout {
     'B',
   ];
   readonly vowelKeyMapping = ['a', 'i', 'u', 'o', 'e', 'E', 'O', 'I'];
-  readonly finalAdditionalKeyMapping = ['%', '&'];
+  readonly suffixKeyMapping = ['%', '&'];
 }

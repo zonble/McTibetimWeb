@@ -15,7 +15,7 @@ export default abstract class StackingLayout extends Layout {
   abstract readonly symbolKeyMapping: string[];
   abstract readonly consonantKeyMapping: string[];
   abstract readonly vowelKeyMapping: string[];
-  abstract readonly finalAdditionalKeyMapping: string[];
+  abstract readonly suffixKeyMapping: string[];
 
   translateKey(key: string): string {
     return key;
@@ -44,8 +44,8 @@ export default abstract class StackingLayout extends Layout {
     return [index >= 0, index];
   }
 
-  isFinalAdditional(key: string): [boolean, number] {
-    const index = this.finalAdditionalKeyMapping.indexOf(key);
+  isSuffix(key: string): [boolean, number] {
+    const index = this.suffixKeyMapping.indexOf(key);
     return [index >= 0, index];
   }
 
@@ -60,7 +60,7 @@ export default abstract class StackingLayout extends Layout {
     0x0f62, 0x0f63, 0x0f64, 0x0f66, 0x0f67, 0x0f68, 0x0f4a, 0x0f4b, 0x0f4c, 0x0f4e, 0x0f65,
   ];
 
-  static MaxStackingConsonants = 10;
+  static MaxStackingConsonants = 4;
   static KbTransform = 34;
   static Htransform = 28;
   static HtransformKey = [2, 10, 14, 18, 32];
@@ -106,7 +106,7 @@ export default abstract class StackingLayout extends Layout {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.VowelChars[index]));
           }
         });
-        this.finalAdditionalKeyMapping.forEach((key, index) => {
+        this.suffixKeyMapping.forEach((key, index) => {
           if (key === key.toLowerCase()) {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.FinalAddChars[index]));
           }
@@ -143,7 +143,7 @@ export default abstract class StackingLayout extends Layout {
           keyNameLowered_.set(key, String.fromCharCode(StackingLayout.VowelChars[index]));
         }
       });
-      this.finalAdditionalKeyMapping.forEach((key, index) => {
+      this.suffixKeyMapping.forEach((key, index) => {
         if (key === key.toLowerCase()) {
           keyNameLowered_.set(key, String.fromCharCode(StackingLayout.FinalAddChars[index]));
         }
@@ -243,10 +243,10 @@ export default abstract class StackingLayout extends Layout {
     }
 
     // Final M or N
-    const [isFinalAdditional, finalAdditionalIndex] = this.isFinalAdditional(ascii);
-    if (isFinalAdditional) {
+    const [isSefffix, suffixIndex] = this.isSuffix(ascii);
+    if (isSefffix) {
       if (state instanceof StackingState) {
-        const coder = StackingLayout.FinalAddChars[finalAdditionalIndex];
+        const coder = StackingLayout.FinalAddChars[suffixIndex];
         const codes = state.utf16Code.concat(coder);
         const buffer = String.fromCharCode(...codes);
         stateCallback(new CommittingState(buffer));

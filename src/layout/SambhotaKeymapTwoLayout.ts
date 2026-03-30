@@ -44,7 +44,7 @@ export default class SambhotaKeymapTwoLayout extends StackingLayout {
     'T',
   ];
   readonly vowelKeyMapping = [' ', 'g', 'j', 'n', 'b', 'B', 'N', 'G'];
-  readonly finalAdditionalKeyMapping = ['!', '%'];
+  readonly suffixKeyMapping = ['!', '%'];
 
   translateKey(key: string): string {
     if (key === 'D') return 'm';

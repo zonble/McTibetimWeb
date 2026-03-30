@@ -20,62 +20,50 @@
       "type": "ime",
       "id": "org.openvanilla.mctibetim.dzongkha",
       "language": "dz",
-      "layouts": [
-        "bt"
-      ]
+      "layouts": ["bt"],
+      "indicator": "འ"
     },
     {
       "name": "__MSG_imeSambhotaKeymapOne__",
       "type": "ime",
       "id": "org.openvanilla.mctibetim.sambhota_keymap_one",
       "language": "bo",
-      "layouts": [
-        "us"
-      ]
+      "layouts": ["us"],
+      "indicator": "ཨ"
     },
     {
       "name": "__MSG_imeSambhotaKeymapTwo__",
       "type": "ime",
       "id": "org.openvanilla.mctibetim.sambhota_keymap_two",
       "language": "bo",
-      "layouts": [
-        "us"
-      ]
+      "layouts": ["us"],
+      "indicator": "ཨ"
     },
     {
       "name": "__MSG_imeTccKeyboardOne__",
       "type": "ime",
       "id": "org.openvanilla.mctibetim.tcc_keyboard_one",
       "language": "bo",
-      "layouts": [
-        "us"
-      ]
+      "layouts": ["us"],
+      "indicator": "ཨ"
     },
     {
       "name": "__MSG_imeTccKeyboardTwo__",
       "type": "ime",
       "id": "org.openvanilla.mctibetim.tcc_keyboard_two",
       "language": "bo",
-      "layouts": [
-        "us"
-      ]
+      "layouts": ["us"],
+      "indicator": "ཨ"
     },
     {
       "name": "__MSG_imeWylie__",
       "type": "ime",
       "id": "org.openvanilla.mctibetim.wylie",
       "language": "bo",
-      "layouts": [
-        "us"
-      ]
+      "layouts": ["us"],
+      "indicator": "ཀ"
     }
   ],
-  "permissions": [
-    "input",
-    "background",
-    "storage"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "permissions": ["input", "background", "storage"],
+  "host_permissions": ["<all_urls>"]
 }
