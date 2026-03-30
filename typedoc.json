@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "name": "McTibetimWeb",
+  "includeVersion": true,
+  "readme": "README.md"
+}
