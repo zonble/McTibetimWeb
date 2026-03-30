@@ -194,7 +194,10 @@ describe('StackingLayout (via SambhotaKeymapOneLayout)', () => {
     });
 
     it('calls errorCallback when max consonants exceeded', () => {
-      const stackingState = new StackingState([0x0f40, 0x0f50, 0x0f56, 0x0f58], [0, 9, 14, 15]);
+      // MaxStackingConsonants is 10, so we need 10 indexes to trigger the error
+      const codes = Array(10).fill(0x0f40);
+      const indexes = Array(10).fill(0);
+      const stackingState = new StackingState(codes, indexes);
       const key = Key.asciiKey('k');
       layout.handle(key, stackingState, stateCallback, errorCallback);
       expect(errorCallback).toHaveBeenCalled();
