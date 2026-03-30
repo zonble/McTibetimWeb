@@ -1,4 +1,3 @@
-import { emit } from 'node:cluster';
 import { Key } from '../input_method';
 import {
   CommittingState,
