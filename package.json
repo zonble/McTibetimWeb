@@ -13,6 +13,7 @@
     "jsdom": "^29.0.1",
     "ts-jest": "^29.4.6",
     "ts-loader": "^9.5.4",
+    "typedoc": "^0.28.18",
     "typescript": "^5.9.3",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.2"
@@ -44,7 +45,8 @@
     "prepublishOnly": "npm run ts-build && npm run test && npm run eslint",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "eslint": "eslint src --ext .ts"
+    "eslint": "eslint src --ext .ts",
+    "docs": "typedoc"
   },
   "repository": {
     "type": "git",

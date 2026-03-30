@@ -273,4 +273,236 @@ describe('StackingLayout (via SambhotaKeymapOneLayout)', () => {
       expect(is).toBe(false);
     });
   });
+
+  describe('handle - cursor key in InputtingState', () => {
+    it('commits composing buffer and returns false when buffer is non-empty', () => {
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.namedKey(KeyName.LEFT);
+      const result = layout.handle(key, stackingState, stateCallback, errorCallback);
+      expect(result).toBe(false);
+      const state = stateCallback.mock.calls[0][0] as CommittingState;
+      expect(state).toBeInstanceOf(CommittingState);
+    });
+
+    it('returns false without committing when composing buffer is empty', () => {
+      const emptyStacking = new StackingState([], []);
+      const key = Key.namedKey(KeyName.RIGHT);
+      const result = layout.handle(key, emptyStacking, stateCallback, errorCallback);
+      expect(result).toBe(false);
+      expect(stateCallback).not.toHaveBeenCalled();
+    });
+
+    it('does nothing and allows pass-through in EmptyState', () => {
+      const key = Key.namedKey(KeyName.HOME);
+      layout.handle(key, new EmptyState(), stateCallback, errorCallback);
+      expect(stateCallback).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handle - return key in InputtingState', () => {
+    it('commits composing buffer and returns true when buffer is non-empty', () => {
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.namedKey(KeyName.RETURN);
+      const result = layout.handle(key, stackingState, stateCallback, errorCallback);
+      expect(result).toBe(true);
+      const state = stateCallback.mock.calls[0][0] as CommittingState;
+      expect(state).toBeInstanceOf(CommittingState);
+    });
+
+    it('does not commit and returns true when buffer is empty', () => {
+      const emptyStacking = new StackingState([], []);
+      const key = Key.namedKey(KeyName.RETURN);
+      const result = layout.handle(key, emptyStacking, stateCallback, errorCallback);
+      expect(result).toBe(true);
+      expect(stateCallback).not.toHaveBeenCalled();
+    });
+
+    it('does nothing in EmptyState', () => {
+      const key = Key.namedKey(KeyName.RETURN);
+      layout.handle(key, new EmptyState(), stateCallback, errorCallback);
+      expect(stateCallback).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handle - space (SPACE key) in StackingState', () => {
+    it('appends tsheg to existing stacked codes and commits', () => {
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.namedKey(KeyName.SPACE);
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as CommittingState;
+      expect(state).toBeInstanceOf(CommittingState);
+      expect(state.commitString).toBe(String.fromCharCode(0x0f40, 0x0f0b));
+    });
+  });
+
+  describe('handle - delete key in InputtingState', () => {
+    it('transitions to EmptyState and returns true', () => {
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.namedKey(KeyName.BACKSPACE);
+      const result = layout.handle(key, stackingState, stateCallback, errorCallback);
+      expect(result).toBe(true);
+      expect(stateCallback.mock.calls[0][0]).toBeInstanceOf(EmptyState);
+    });
+  });
+
+  describe('handle - symbol key in StackingState', () => {
+    it('appends symbol code to existing stacked codes and commits', () => {
+      const stackingState = new StackingState([0x0f40], [0]);
+      // SambhotaKeymapOneLayout symbolKeyMapping[1] = ','
+      const key = Key.asciiKey(',');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as CommittingState;
+      expect(state).toBeInstanceOf(CommittingState);
+      expect(state.commitString).toBe(
+        String.fromCharCode(0x0f40, StackingLayout.SymbolChars[1]),
+      );
+    });
+  });
+
+  describe('handle - vowel in StackingState', () => {
+    it('appends vowel code to existing stacked codes and commits', () => {
+      // 'i' is vowelKeyMapping[1] in SambhotaKeymapOneLayout → VowelChars[1] = 0x0f72
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.asciiKey('i');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as CommittingState;
+      expect(state).toBeInstanceOf(CommittingState);
+      expect(state.commitString).toBe(String.fromCharCode(0x0f40, 0x0f72));
+    });
+  });
+
+  describe('handle - KbTransform consonant (index 34 = B)', () => {
+    it('produces ksa (0x0f69) when only one consonant is stacked', () => {
+      // indexes.length < 2 → push 0x0f69
+      const stackingState = new StackingState([0x0f40], [0]);
+      const key = Key.asciiKey('B');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(0x0f69);
+    });
+
+    it('produces aspirated form when two consonants end with h-transform + Htransform', () => {
+      // indexes=[2 (g), 28 (h)]: isHatransform=true, indexes[1]=28=Htransform
+      const stackingState = new StackingState([0x0f42, 0x0f50 + 0x50], [2, 28]);
+      const key = Key.asciiKey('B');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(StackingLayout.HtransformChars[0]);
+    });
+
+    it('produces kssa (0x0fb9) for k + ssa stack', () => {
+      // indexes=[0 (k), 34 (B)]: k + ssa → kssa
+      const stackingState = new StackingState([0x0f40, 0x0f65], [0, 34]);
+      const key = Key.asciiKey('B');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(0x0fb9);
+    });
+
+    it('produces general ksa cluster for two non-special consonants', () => {
+      // indexes=[4 (c), 5 (C)]: not h-transform, not k+ssa
+      const stackingState = new StackingState(
+        [StackingLayout.ConsonantChars[4], StackingLayout.ConsonantChars[5]],
+        [4, 5],
+      );
+      const key = Key.asciiKey('B');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(0x0fb9);
+    });
+
+    it('includes second consonant code when three consonants are stacked', () => {
+      // indexes=[4, 5, 6]: indexes.length === 3 → secondCode is added
+      const stackingState = new StackingState(
+        [
+          StackingLayout.ConsonantChars[4],
+          StackingLayout.ConsonantChars[5],
+          StackingLayout.ConsonantChars[6],
+        ],
+        [4, 5, 6],
+      );
+      const key = Key.asciiKey('B');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(StackingLayout.ConsonantChars[5]);
+    });
+  });
+
+  describe('handle - Htransform consonant (index 28 = h)', () => {
+    it('produces aspirated consonant when one h-transform consonant is stacked', () => {
+      // indexes=[2 (g)]: IsHtransformConsonantIndex(2)=[true,0] → HtransformChars[0]=0x0f43
+      const stackingState = new StackingState([StackingLayout.ConsonantChars[2]], [2]);
+      const key = Key.asciiKey('h');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(StackingLayout.HtransformChars[0]);
+    });
+
+    it('uses firstHtransform branch when first consonant is htransform and second index matches', () => {
+      // indexes=[2 (g), 0 (k), 2 (g)]: last=g(htransform,pos=0), first=g(htransform),
+      // indexes[1]=0 === htransformIndex=0 → use HtransformChars[0]
+      const stackingState = new StackingState(
+        [StackingLayout.ConsonantChars[2], StackingLayout.ConsonantChars[0], StackingLayout.ConsonantChars[2]],
+        [2, 0, 2],
+      );
+      const key = Key.asciiKey('h');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(StackingLayout.HtransformChars[0]);
+    });
+
+    it('uses kssa branch when first two consonants are k + ssa', () => {
+      // indexes=[0 (k), 34 (B), 2 (g)]: last=g(htransform), indexes[0]=0 && indexes[1]=34 → kssa
+      const stackingState = new StackingState(
+        [StackingLayout.ConsonantChars[0], StackingLayout.ConsonantChars[34], StackingLayout.ConsonantChars[2]],
+        [0, 34, 2],
+      );
+      const key = Key.asciiKey('h');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(0x0fb9);
+    });
+
+    it('uses general multi-consonant branch for non-special three-consonant stack', () => {
+      // indexes=[3 (G), 4 (c), 2 (g)]: last=g(htransform), first not htransform, not k+ssa
+      const stackingState = new StackingState(
+        [StackingLayout.ConsonantChars[3], StackingLayout.ConsonantChars[4], StackingLayout.ConsonantChars[2]],
+        [3, 4, 2],
+      );
+      const key = Key.asciiKey('h');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(StackingLayout.ConsonantChars[4]);
+    });
+
+    it('falls through to regular consonant stacking when last consonant is not h-transform type', () => {
+      // indexes=[0 (k)]: IsHtransformConsonantIndex(0)=[false,-1] → stacks h normally
+      const stackingState = new StackingState([StackingLayout.ConsonantChars[0]], [0]);
+      const key = Key.asciiKey('h');
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+    });
+  });
+
+  describe('handle - consonant index 22 (apostrophe) in StackingState', () => {
+    it('uses 0x0f71 (aa-chung) code for consonant index 22 when stacking', () => {
+      // In SambhotaKeymapOneLayout consonantKeyMapping[22] = "'"
+      const stackingState = new StackingState([StackingLayout.ConsonantChars[0]], [0]);
+      const key = Key.asciiKey("'");
+      layout.handle(key, stackingState, stateCallback, errorCallback);
+      const state = stateCallback.mock.calls[0][0] as StackingState;
+      expect(state).toBeInstanceOf(StackingState);
+      expect(state.utf16Code).toContain(0x0f71);
+    });
+  });
 });
