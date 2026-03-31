@@ -508,3 +508,8 @@ textarea#text_area:focus ~ * #edit_area,
   border-radius: var(--radius-sm);
   visibility: hidden;
 }
+
+.tag-line {
+  font-size: 0.7em;
+  color: var(--text-secondary);
+}

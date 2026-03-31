@@ -25,15 +25,39 @@
     let that = {};
     that.reset = resetUI;
 
+    function insertTextAtSelection(text) {
+      const textArea = document.getElementById('text_area');
+      const selectionStart = textArea.selectionStart;
+      const selectionEnd = textArea.selectionEnd;
+      const currentText = textArea.value;
+      const head = currentText.substring(0, selectionStart);
+      const tail = currentText.substring(selectionEnd);
+
+      textArea.value = head + text + tail;
+      const cursorPosition = head.length + text.length;
+      textArea.setSelectionRange(cursorPosition, cursorPosition);
+    }
+
+    function removeTextBeforeSelection() {
+      const textArea = document.getElementById('text_area');
+      const selectionStart = textArea.selectionStart;
+      const selectionEnd = textArea.selectionEnd;
+      const currentText = textArea.value;
+      const head = currentText.substring(0, selectionStart);
+      const tail = currentText.substring(selectionEnd);
+
+      textArea.value = head.substring(0, head.length - 1) + tail;
+      const cursorPosition = Math.max(0, head.length - 1);
+      textArea.setSelectionRange(cursorPosition, cursorPosition);
+    }
+
     that.commitString = function (string) {
-      var selectionStart = document.getElementById('text_area').selectionStart;
-      var selectionEnd = document.getElementById('text_area').selectionEnd;
-      var text = document.getElementById('text_area').value;
-      var head = text.substring(0, selectionStart);
-      var tail = text.substring(selectionEnd);
-      document.getElementById('text_area').value = head + string + tail;
-      let start = selectionStart + string.length;
-      document.getElementById('text_area').setSelectionRange(start, start);
+      insertTextAtSelection(string);
+      composingBuffer = '';
+    };
+
+    that.backspace = () => {
+      removeTextBeforeSelection();
       composingBuffer = '';
     };
 
@@ -231,8 +255,6 @@
   });
 
   textarea.addEventListener('keydown', (event) => {
-    // console.log(event);
-
     if (isComposing || event.isComposing || event.keyCode === 229) {
       return;
     }
@@ -310,13 +332,13 @@
         return;
       }
 
-      const handled = inputMethod.controller.handleSimpleKeyboardEvent(
+      const handled = controller.handleSimpleKeyboardEvent(
         button,
         api.isShift || api.isLock,
         api.isCtrl,
         api.isAlt,
       );
-      focusTextArea();
+      document.getElementById('text_area').focus();
 
       if (api.isShift) {
         api.isShift = false;
@@ -345,7 +367,7 @@
         '{enter}': '↵',
         '{space}': '་',
         '{ctrl}': '⌃',
-        '{alt}': 'Alt',
+        '{alt}': 'AltGr',
       };
       for (const [key, value] of names.entries()) {
         if (display[key] === undefined) {

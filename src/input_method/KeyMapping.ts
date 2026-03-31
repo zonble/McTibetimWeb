@@ -4,6 +4,150 @@ import { Key, KeyName } from './Key';
  * Maps DOM keyboard events into the internal Key representation.
  */
 export class KeyMapping {
+  static readonly upperKeyCodeAsciiMapping = new Map<string, string>([
+    ['Backquote', '~'],
+    ['Digit1', '!'],
+    ['Digit2', '@'],
+    ['Digit3', '#'],
+    ['Digit4', '$'],
+    ['Digit5', '%'],
+    ['Digit6', '^'],
+    ['Digit7', '&'],
+    ['Digit8', '*'],
+    ['Digit9', '('],
+    ['Digit0', ')'],
+    ['Minus', '_'],
+    ['Equal', '+'],
+    ['KeyQ', 'Q'],
+    ['KeyW', 'W'],
+    ['KeyE', 'E'],
+    ['KeyR', 'R'],
+    ['KeyT', 'T'],
+    ['KeyY', 'Y'],
+    ['KeyU', 'U'],
+    ['KeyI', 'I'],
+    ['KeyO', 'O'],
+    ['KeyP', 'P'],
+    ['BracketLeft', '{'],
+    ['BracketRight', '}'],
+    ['Backslash', '|'],
+    ['KeyA', 'A'],
+    ['KeyS', 'S'],
+    ['KeyD', 'D'],
+    ['KeyF', 'F'],
+    ['KeyG', 'G'],
+    ['KeyH', 'H'],
+    ['KeyJ', 'J'],
+    ['KeyK', 'K'],
+    ['KeyL', 'L'],
+    ['Semicolon', ':'],
+    ['Quote', '"'],
+    ['KeyZ', 'Z'],
+    ['KeyX', 'X'],
+    ['KeyC', 'C'],
+    ['KeyV', 'V'],
+    ['KeyB', 'B'],
+    ['KeyN', 'N'],
+    ['KeyM', 'M'],
+    ['Comma', '<'],
+    ['Period', '>'],
+    ['Slash', '?'],
+  ]);
+
+  static readonly lowerKeyCodeAsciiMapping = new Map<string, string>([
+    ['Backquote', '`'],
+    ['Digit1', '1'],
+    ['Digit2', '2'],
+    ['Digit3', '3'],
+    ['Digit4', '4'],
+    ['Digit5', '5'],
+    ['Digit6', '6'],
+    ['Digit7', '7'],
+    ['Digit8', '8'],
+    ['Digit9', '9'],
+    ['Digit0', '0'],
+    ['Minus', '-'],
+    ['Equal', '='],
+    ['KeyQ', 'q'],
+    ['KeyW', 'w'],
+    ['KeyE', 'e'],
+    ['KeyR', 'r'],
+    ['KeyT', 't'],
+    ['KeyY', 'y'],
+    ['KeyU', 'u'],
+    ['KeyI', 'i'],
+    ['KeyO', 'o'],
+    ['KeyP', 'p'],
+    ['BracketLeft', '['],
+    ['BracketRight', ']'],
+    ['Backslash', '\\'],
+    ['KeyA', 'a'],
+    ['KeyS', 's'],
+    ['KeyD', 'd'],
+    ['KeyF', 'f'],
+    ['KeyG', 'g'],
+    ['KeyH', 'h'],
+    ['KeyJ', 'j'],
+    ['KeyK', 'k'],
+    ['KeyL', 'l'],
+    ['Semicolon', ';'],
+    ['Quote', '"'],
+    ['KeyZ', 'z'],
+    ['KeyX', 'x'],
+    ['KeyC', 'c'],
+    ['KeyV', 'v'],
+    ['KeyB', 'b'],
+    ['KeyN', 'n'],
+    ['KeyM', 'm'],
+    ['Comma', ','],
+    ['Period', '.'],
+    ['Slash', '/'],
+  ]);
+
+  static keyFromSimpleKeyboardEvent(
+    button: string,
+    isShift: boolean,
+    isCtrl: boolean,
+    isAlt: boolean,
+  ) {
+    let keyName = KeyName.UNKNOWN;
+    let ascii = '';
+
+    if (button.length === 1) {
+      keyName = KeyName.ASCII;
+      ascii = button;
+    } else {
+      switch (button) {
+        case '{bksp}':
+          keyName = KeyName.BACKSPACE;
+          break;
+        case '{enter}':
+          keyName = KeyName.RETURN;
+          break;
+        case '{space}':
+          keyName = KeyName.SPACE;
+          ascii = ' ';
+          break;
+        case '{tab}':
+          keyName = KeyName.TAB;
+          break;
+        default:
+          break;
+      }
+    }
+    let code = '';
+    if (isShift) {
+      code = [...KeyMapping.upperKeyCodeAsciiMapping.entries()].find(
+        ([, value]) => value === ascii,
+      )?.[0] as string;
+    } else {
+      code = [...KeyMapping.lowerKeyCodeAsciiMapping.entries()].find(
+        ([, value]) => value === ascii,
+      )?.[0] as string;
+    }
+
+    return new Key(ascii, keyName, isShift, isCtrl, false, isAlt, isAlt, code);
+  }
   /**
    * Converts a browser keyboard event into a normalized Key.
    * @param event The browser keyboard event.
@@ -111,14 +255,25 @@ export class KeyMapping {
       default:
         break;
     }
+
+    let isAlt = event.altKey;
+    let isAltGr = event.altKey;
+    try {
+      if (typeof event.getModifierState === 'function') {
+        isAltGr = event.getModifierState('AltGraph');
+      }
+    } catch (e) {
+      // Some browsers may throw an error if 'AltGraph' is not supported. In that case, we fall back to using altKey.
+    }
+
     const key = new Key(
       event.key,
       keyName,
       event.shiftKey,
       event.ctrlKey,
       isNumpadKey,
-      event.altKey,
-      event.altKey && event.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT,
+      isAlt,
+      isAltGr,
       event.code,
     );
     return key;

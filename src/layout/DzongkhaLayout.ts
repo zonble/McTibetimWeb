@@ -1,6 +1,6 @@
 import { CommittingState, InputState } from '../input_method/InputState';
 import Layout from './Layout';
-import { Key } from '../input_method';
+import { Key, KeyMapping } from '../input_method';
 import { KeyName } from '../input_method/Key';
 
 export default class DzongkhaLayout implements Layout {
@@ -27,11 +27,10 @@ export default class DzongkhaLayout implements Layout {
       const keyCode = key.code;
       let ascii: string | undefined = undefined;
       if (key.shiftPressed) {
-        ascii = this.upperKeyCodeAsciiMapping.get(keyCode);
+        ascii = KeyMapping.upperKeyCodeAsciiMapping.get(keyCode);
       } else {
-        ascii = this.lowerKeyCodeAsciiMapping.get(keyCode);
+        ascii = KeyMapping.lowerKeyCodeAsciiMapping.get(keyCode);
       }
-      // console.log('Alt pressed. Key code:', keyCode, 'Mapped ASCII:', ascii); // Debug log for Alt key handling
       if (ascii) {
         let code = this.altKeyMap.get(ascii);
         if (!code) {
@@ -105,106 +104,6 @@ export default class DzongkhaLayout implements Layout {
     }
     return this.keyNameLowered_;
   }
-
-  readonly upperKeyCodeAsciiMapping = new Map<string, string>([
-    ['Backquote', '~'],
-    ['Digit1', '!'],
-    ['Digit2', '@'],
-    ['Digit3', '#'],
-    ['Digit4', '$'],
-    ['Digit5', '%'],
-    ['Digit6', '^'],
-    ['Digit7', '&'],
-    ['Digit8', '*'],
-    ['Digit9', '('],
-    ['Digit0', ')'],
-    ['Minus', '_'],
-    ['Equal', '+'],
-    ['KeyQ', 'Q'],
-    ['KeyW', 'W'],
-    ['KeyE', 'E'],
-    ['KeyR', 'R'],
-    ['KeyT', 'T'],
-    ['KeyY', 'Y'],
-    ['KeyU', 'U'],
-    ['KeyI', 'I'],
-    ['KeyO', 'O'],
-    ['KeyP', 'P'],
-    ['BracketLeft', '{'],
-    ['BracketRight', '}'],
-    ['Backslash', '|'],
-    ['KeyA', 'A'],
-    ['KeyS', 'S'],
-    ['KeyD', 'D'],
-    ['KeyF', 'F'],
-    ['KeyG', 'G'],
-    ['KeyH', 'H'],
-    ['KeyJ', 'J'],
-    ['KeyK', 'K'],
-    ['KeyL', 'L'],
-    ['Semicolon', ':'],
-    ['Quote', '"'],
-    ['KeyZ', 'Z'],
-    ['KeyX', 'X'],
-    ['KeyC', 'C'],
-    ['KeyV', 'V'],
-    ['KeyB', 'B'],
-    ['KeyN', 'N'],
-    ['KeyM', 'M'],
-    ['Comma', '<'],
-    ['Period', '>'],
-    ['Slash', '?'],
-  ]);
-
-  readonly lowerKeyCodeAsciiMapping = new Map<string, string>([
-    ['Backquote', '`'],
-    ['Digit1', '1'],
-    ['Digit2', '2'],
-    ['Digit3', '3'],
-    ['Digit4', '4'],
-    ['Digit5', '5'],
-    ['Digit6', '6'],
-    ['Digit7', '7'],
-    ['Digit8', '8'],
-    ['Digit9', '9'],
-    ['Digit0', '0'],
-    ['Minus', '-'],
-    ['Equal', '='],
-    ['KeyQ', 'q'],
-    ['KeyW', 'w'],
-    ['KeyE', 'e'],
-    ['KeyR', 'r'],
-    ['KeyT', 't'],
-    ['KeyY', 'y'],
-    ['KeyU', 'u'],
-    ['KeyI', 'i'],
-    ['KeyO', 'o'],
-    ['KeyP', 'p'],
-    ['BracketLeft', '['],
-    ['BracketRight', ']'],
-    ['Backslash', '\\'],
-    ['KeyA', 'a'],
-    ['KeyS', 's'],
-    ['KeyD', 'd'],
-    ['KeyF', 'f'],
-    ['KeyG', 'g'],
-    ['KeyH', 'h'],
-    ['KeyJ', 'j'],
-    ['KeyK', 'k'],
-    ['KeyL', 'l'],
-    ['Semicolon', ';'],
-    ['Quote', '"'],
-    ['KeyZ', 'z'],
-    ['KeyX', 'x'],
-    ['KeyC', 'c'],
-    ['KeyV', 'v'],
-    ['KeyB', 'b'],
-    ['KeyN', 'n'],
-    ['KeyM', 'm'],
-    ['Comma', ','],
-    ['Period', '.'],
-    ['Slash', '/'],
-  ]);
 
   readonly altKeyMap = new Map<string, string>([
     ['`', '࿑'],

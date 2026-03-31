@@ -58,6 +58,16 @@ export default class InputController {
     return this.handle(key);
   }
 
+  handleSimpleKeyboardEvent(
+    button: string,
+    isShift: boolean,
+    isCtrl: boolean,
+    isAlt: boolean,
+  ): boolean {
+    const key = KeyMapping.keyFromSimpleKeyboardEvent(button, isShift, isCtrl, isAlt);
+    return this.handle(key);
+  }
+
   /**
    * Handles an already translated key input.
    *
