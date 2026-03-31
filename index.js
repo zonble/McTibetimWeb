@@ -211,10 +211,9 @@
   const layouts = manager.layouts;
   let selectedLayout = window.localStorage.getItem('selectedLayout');
 
-  if (selectedLayout === undefined) {
+  if (!selectedLayout) {
     selectedLayout = layouts[0].layoutId;
   }
-  controller.selectLayoutById(selectedLayout);
 
   const select = document.getElementById('input-table-select');
   select.innerHTML = '';
@@ -229,6 +228,7 @@
   }
 
   select.value = selectedLayout;
+  controller.selectLayoutById(selectedLayout);
 
   select.addEventListener('change', (event) => {
     onChangeTable(event.target.value);
