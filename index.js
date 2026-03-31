@@ -256,6 +256,7 @@
       isLock: false,
       isShift: false,
       isCtrl: false,
+      isAlt: false,
     };
 
     const Keyboard = window.SimpleKeyboard.default;
@@ -268,14 +269,14 @@
       '{tab} q w e r t y u i o p [ ] \\',
       "{lock} a s d f g h j k l ; ' {enter}",
       '{shift} z x c v b n m , . / {shift}',
-      '{ctrl} {space}',
+      '{ctrl} {space} {alt}',
     ];
     const shiftLayout = [
       '~ ! @ # $ % ^ & * ( ) _ + {bksp}',
       '{tab} Q W E R T Y U I O P { } |',
       '{lock} A S D F G H J K L : " {enter}',
       '{shift} Z X C V B N M < > ? {shift}',
-      '{ctrl} {space}',
+      '{ctrl} {space} {alt}',
     ];
 
     function handleModifierButton(button) {
@@ -285,6 +286,8 @@
         api.isShift = !api.isShift;
       } else if (button === '{ctrl}') {
         api.isCtrl = !api.isCtrl;
+      } else if (button === '{alt}') {
+        api.isAlt = !api.isAlt;
       } else {
         return false;
       }
@@ -311,6 +314,7 @@
         button,
         api.isShift || api.isLock,
         api.isCtrl,
+        api.isAlt,
       );
       focusTextArea();
 
@@ -322,13 +326,17 @@
         api.isCtrl = false;
         api.loadLayout();
       }
+      if (api.isAlt) {
+        api.isAlt = false;
+        api.loadLayout();
+      }
       if (!handled) {
         handleFallbackButton(button);
       }
     }
 
     function buildKeyboardDisplay() {
-      const names = controller.getCurrentKeyNames(api.isShift || api.isLock, api.isCtrl, false);
+      const names = controller.getCurrentKeyNames(api.isShift || api.isLock, api.isCtrl, api.isAlt);
       const display = {
         '{tab}': '⇥',
         '{lock}': 'Lock',
@@ -337,6 +345,7 @@
         '{enter}': '↵',
         '{space}': '་',
         '{ctrl}': '⌃',
+        '{alt}': 'Alt',
       };
       for (const [key, value] of names.entries()) {
         if (display[key] === undefined) {
@@ -356,6 +365,9 @@
       }
       if (api.isCtrl) {
         buttonTheme.push({ class: 'hg-button-active', buttons: '{ctrl}' });
+      }
+      if (api.isAlt) {
+        buttonTheme.push({ class: 'hg-button-active', buttons: '{alt}' });
       }
       return buttonTheme;
     }

@@ -9,12 +9,14 @@
   --border-subtle: #d2ccc2;
   --border-strong: #7d776e;
   --accent: #24211b;
-  --focus-ring: #111111;
+  --accent-contrast: #fffdf8;
+  --focus-ring: #111;
   --link: #3d3a34;
-  --link-hover: #000000;
+  --link-hover: #000;
   --candidate-highlight: #dfebe4;
   --marking: #e4efeb;
   --danger: #7a1f1f;
+  --shadow-flat: none;
   --radius-sm: 6px;
   --radius-md: 12px;
   --spacing-1: 0.375rem;
@@ -36,6 +38,7 @@
     --border-subtle: #42473f;
     --border-strong: #8f978b;
     --accent: #f2f0ea;
+    --accent-contrast: #141613;
     --focus-ring: #f2f0ea;
     --link: #d6d1c6;
     --link-hover: #fffdf8;
@@ -482,6 +485,11 @@ textarea#text_area:focus ~ * #edit_area,
 }
 
 .hg-button[data-skbtn='{ctrl}'] {
+  flex-grow: 1 !important;
+  max-width: 80px;
+}
+
+.hg-button[data-skbtn='{alt}'] {
   flex-grow: 1 !important;
   max-width: 80px;
 }
