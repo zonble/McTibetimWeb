@@ -238,16 +238,16 @@ class PimeMcTibetim {
         const tooltip = state.tooltip;
         let showMessage = {};
         let hideMessage = true;
-        if (tooltip) {
-          showMessage = { message: tooltip, duration: 3 };
-          hideMessage = false;
+        if (tooltip && !candidateList.length) {
+          candidateList.push(tooltip);
+          selectedIndex = -1;
         }
         const commitString = instance.uiState.commitString;
         instance.uiState = {
           commitString: commitString,
           compositionString: compositionString,
           compositionCursor: state.cursorIndex,
-          showCandidates: candidates.length > 0,
+          showCandidates: candidateList.length > 0,
           candidateList: candidateList,
           candidateCursor: selectedIndex,
           showMessage: showMessage,
@@ -316,7 +316,7 @@ class PimeMcTibetim {
    * @returns The custom UI response.
    */
   public customUiResponse(): any {
-    let fontSize = 12;
+    let fontSize = 24;
 
     return {
       openKeyboard: this.isOpened,
