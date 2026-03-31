@@ -206,7 +206,6 @@
     return that;
   })();
 
-  const controller = new InputController(ui);
   const manager = LayoutManager.getInstance();
   const layouts = manager.layouts;
   let selectedLayout = window.localStorage.getItem('selectedLayout');
@@ -228,6 +227,7 @@
   }
 
   select.value = selectedLayout;
+  const controller = new InputController(ui);
   controller.selectLayoutById(selectedLayout);
 
   select.addEventListener('change', (event) => {
