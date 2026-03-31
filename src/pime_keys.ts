@@ -223,127 +223,211 @@ export function KeyFromKeyboardEvent(
 ) {
   let isNumpadKey = false;
   let keyName = KeyName.UNKNOWN;
-  switch (keyCode) {
-    case VK_Keys.VK_LEFT:
-      keyName = KeyName.LEFT;
-      ascii = 'ArrowLeft';
-      break;
-    case VK_Keys.VK_RIGHT:
-      keyName = KeyName.RIGHT;
-      ascii = 'ArrowRight';
-      break;
-    case VK_Keys.VK_UP:
-      keyName = KeyName.UP;
-      ascii = 'ArrowUp';
-      break;
-    case VK_Keys.VK_DOWN:
-      keyName = KeyName.DOWN;
-      ascii = 'ArrowDown';
-      break;
-    case VK_Keys.VK_HOME:
-      keyName = KeyName.HOME;
-      ascii = 'Home';
-      break;
-    case VK_Keys.VK_END:
-      keyName = KeyName.END;
-      ascii = 'End';
-      break;
-    case VK_Keys.VK_BACK:
-      keyName = KeyName.BACKSPACE;
-      ascii = 'Backspace';
-      break;
-    case VK_Keys.VK_DELETE:
-      keyName = KeyName.DELETE;
-      ascii = 'Delete';
-      break;
-    case VK_Keys.VK_RETURN:
-      keyName = KeyName.RETURN;
-      ascii = 'Enter';
-      break;
-    case VK_Keys.VK_ESCAPE:
-      keyName = KeyName.ESC;
-      ascii = 'Escape';
-      break;
-    case VK_Keys.VK_SPACE:
-      keyName = KeyName.SPACE;
-      ascii = 'Space';
-      break;
-    case VK_Keys.VK_TAB:
-      keyName = KeyName.TAB;
-      ascii = 'Tab';
-      break;
-    case VK_Keys.VK_PRIOR:
-      keyName = KeyName.PAGE_UP;
-      ascii = 'PageUp';
-      break;
-    case VK_Keys.VK_NEXT:
-      keyName = KeyName.PAGE_DOWN;
-      ascii = 'PageDown';
-      break;
-    case VK_Keys.VK_NUMPAD0:
-      isNumpadKey = true;
-      ascii = '0';
-      break;
-    case VK_Keys.VK_NUMPAD1:
-      isNumpadKey = true;
-      ascii = '1';
-      break;
-    case VK_Keys.VK_NUMPAD2:
-      isNumpadKey = true;
-      ascii = '2';
-      break;
-    case VK_Keys.VK_NUMPAD3:
-      isNumpadKey = true;
-      ascii = '3';
-      break;
-    case VK_Keys.VK_NUMPAD4:
-      isNumpadKey = true;
-      ascii = '4';
-      break;
-    case VK_Keys.VK_NUMPAD5:
-      isNumpadKey = true;
-      ascii = '5';
-      break;
-    case VK_Keys.VK_NUMPAD6:
-      isNumpadKey = true;
-      ascii = '6';
-      break;
-    case VK_Keys.VK_NUMPAD7:
-      isNumpadKey = true;
-      ascii = '7';
-      break;
-    case VK_Keys.VK_NUMPAD8:
-      isNumpadKey = true;
-      ascii = '8';
-      break;
-    case VK_Keys.VK_NUMPAD9:
-      isNumpadKey = true;
-      ascii = '9';
-      break;
-    case VK_Keys.VK_MULTIPLY:
-      isNumpadKey = true;
-      ascii = '*';
-      break;
-    case VK_Keys.VK_DIVIDE:
-      isNumpadKey = true;
-      ascii = '/';
-      break;
-    case VK_Keys.VK_ADD:
-      isNumpadKey = true;
-      ascii = '+';
-      break;
-    case VK_Keys.VK_SUBTRACT:
-      isNumpadKey = true;
-      ascii = '-';
-      break;
-    case VK_Keys.VK_DECIMAL:
-      isNumpadKey = true;
-      ascii = '.';
-      break;
-    default:
-      keyName = KeyName.ASCII;
-      break;
+  let code = '';
+
+  if (keyCode >= 0x30 && keyCode <= 0x39) {
+    code = 'Digit' + (keyCode - 0x30);
+    keyName = KeyName.ASCII;
+  } else if (keyCode >= 0x41 && keyCode <= 0x5a) {
+    code = 'Key' + String.fromCharCode(keyCode);
+    keyName = KeyName.ASCII;
+  } else {
+    switch (keyCode) {
+      case VK_Keys.VK_LEFT:
+        keyName = KeyName.LEFT;
+        ascii = 'ArrowLeft';
+        code = 'ArrowLeft';
+        break;
+      case VK_Keys.VK_RIGHT:
+        keyName = KeyName.RIGHT;
+        ascii = 'ArrowRight';
+        code = 'ArrowRight';
+        break;
+      case VK_Keys.VK_UP:
+        keyName = KeyName.UP;
+        ascii = 'ArrowUp';
+        code = 'ArrowUp';
+        break;
+      case VK_Keys.VK_DOWN:
+        keyName = KeyName.DOWN;
+        ascii = 'ArrowDown';
+        code = 'ArrowDown';
+        break;
+      case VK_Keys.VK_HOME:
+        keyName = KeyName.HOME;
+        ascii = 'Home';
+        code = 'Home';
+        break;
+      case VK_Keys.VK_END:
+        keyName = KeyName.END;
+        ascii = 'End';
+        code = 'End';
+        break;
+      case VK_Keys.VK_BACK:
+        keyName = KeyName.BACKSPACE;
+        ascii = 'Backspace';
+        code = 'Backspace';
+        break;
+      case VK_Keys.VK_DELETE:
+        keyName = KeyName.DELETE;
+        ascii = 'Delete';
+        code = 'Delete';
+        break;
+      case VK_Keys.VK_RETURN:
+        keyName = KeyName.RETURN;
+        ascii = 'Enter';
+        code = 'Enter';
+        break;
+      case VK_Keys.VK_ESCAPE:
+        keyName = KeyName.ESC;
+        ascii = 'Escape';
+        code = 'Escape';
+        break;
+      case VK_Keys.VK_SPACE:
+        keyName = KeyName.SPACE;
+        ascii = 'Space';
+        code = 'Space';
+        break;
+      case VK_Keys.VK_TAB:
+        keyName = KeyName.TAB;
+        ascii = 'Tab';
+        code = 'Tab';
+        break;
+      case VK_Keys.VK_PRIOR:
+        keyName = KeyName.PAGE_UP;
+        ascii = 'PageUp';
+        code = 'PageUp';
+        break;
+      case VK_Keys.VK_NEXT:
+        keyName = KeyName.PAGE_DOWN;
+        ascii = 'PageDown';
+        code = 'PageDown';
+        break;
+      case VK_Keys.VK_NUMPAD0:
+        isNumpadKey = true;
+        ascii = '0';
+        code = 'Digit0';
+        break;
+      case VK_Keys.VK_NUMPAD1:
+        isNumpadKey = true;
+        ascii = '1';
+        code = 'Digit1';
+        break;
+      case VK_Keys.VK_NUMPAD2:
+        isNumpadKey = true;
+        ascii = '2';
+        code = 'Digit2';
+        break;
+      case VK_Keys.VK_NUMPAD3:
+        isNumpadKey = true;
+        ascii = '3';
+        code = 'Digit3';
+        break;
+      case VK_Keys.VK_NUMPAD4:
+        isNumpadKey = true;
+        ascii = '4';
+        code = 'Digit4';
+        break;
+      case VK_Keys.VK_NUMPAD5:
+        isNumpadKey = true;
+        ascii = '5';
+        code = 'Digit5';
+        break;
+      case VK_Keys.VK_NUMPAD6:
+        isNumpadKey = true;
+        ascii = '6';
+        code = 'Digit6';
+        break;
+      case VK_Keys.VK_NUMPAD7:
+        isNumpadKey = true;
+        ascii = '7';
+        code = 'Digit7';
+        break;
+      case VK_Keys.VK_NUMPAD8:
+        isNumpadKey = true;
+        ascii = '8';
+        code = 'Digit8';
+        break;
+      case VK_Keys.VK_NUMPAD9:
+        isNumpadKey = true;
+        ascii = '9';
+        code = 'Digit9';
+        break;
+      case VK_Keys.VK_MULTIPLY:
+        isNumpadKey = true;
+        ascii = '*';
+        code = 'NumpadMultiply';
+        break;
+      case VK_Keys.VK_DIVIDE:
+        isNumpadKey = true;
+        ascii = '/';
+        code = 'NumpadDivide';
+        break;
+      case VK_Keys.VK_ADD:
+        isNumpadKey = true;
+        ascii = '+';
+        code = 'NumpadAdd';
+        break;
+      case VK_Keys.VK_SUBTRACT:
+        isNumpadKey = true;
+        ascii = '-';
+        code = 'NumpadSubtract';
+        break;
+      case VK_Keys.VK_DECIMAL:
+        isNumpadKey = true;
+        ascii = '.';
+        code = 'NumpadDecimal';
+        break;
+      case VK_Keys.VK_OEM_1:
+        code = 'Semicolon';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_PLUS:
+        code = 'Equal';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_COMMA:
+        code = 'Comma';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_MINUS:
+        code = 'Minus';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_PERIOD:
+        code = 'Period';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_2:
+        code = 'Slash';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_3:
+        code = 'Backquote';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_4:
+        code = 'BracketLeft';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_5:
+        code = 'Backslash';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_6:
+        code = 'BracketRight';
+        keyName = KeyName.ASCII;
+        break;
+      case VK_Keys.VK_OEM_7:
+        code = 'Quote';
+        keyName = KeyName.ASCII;
+        break;
+      default:
+        keyName = KeyName.ASCII;
+        break;
+    }
   }
+
   const shiftKey = (keyStates[VK_Keys.VK_SHIFT] & (1 << 7)) !== 0;
   if (charCode === 0 && keyName === KeyName.ASCII && shiftKey) {
     ascii = 'Shift';
@@ -356,6 +440,6 @@ export function KeyFromKeyboardEvent(
   }
   // TODO: map keyCode to Web standard.
 
-  const key = new Key(ascii, keyName, shiftKey, ctrlKey, isNumpadKey, altKey, rightAltKey);
+  const key = new Key(ascii, keyName, shiftKey, ctrlKey, isNumpadKey, altKey, rightAltKey, code);
   return key;
 }
