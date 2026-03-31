@@ -48,9 +48,9 @@ export default class WyleLayout extends Layout {
     // RETURN key sends letters.
     if (key.name === KeyName.RETURN) {
       if (state instanceof WylieInputtingState) {
-        let letters = state.letters;
-        if (letters.length > 0) {
-          stateCallback(new CommittingState(letters));
+        let tibetan = state.tibetan;
+        if (tibetan.length > 0) {
+          stateCallback(new CommittingState(tibetan));
         }
         return true;
       } else {

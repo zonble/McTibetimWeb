@@ -82,7 +82,7 @@ describe('WyleLayout', () => {
       expect(result).toBe(true);
       const state = stateCallback.mock.calls[0][0] as CommittingState;
       expect(state).toBeInstanceOf(CommittingState);
-      expect(state.commitString).toBe('ka');
+      expect(state.commitString).toBe('ཀ');
     });
 
     it('returns false in EmptyState', () => {
