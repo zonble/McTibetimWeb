@@ -1,9 +1,7 @@
-import { LayoutManager } from '../layout';
+import LayoutManager from '../layout/LayoutManager';
 import Layout from '../layout/Layout';
-import SambhotaKeymapOneLayout from '../layout/SambhotaKeymapOneLayout';
-
-import { CommittingState, EmptyState, InputState, InputtingState } from './InputState';
-import { Key, KeyName } from './Key';
+import { InputState } from './InputState';
+import { Key } from './Key';
 
 /**
  * Bridges key events with the active keyboard layout.
@@ -13,7 +11,7 @@ import { Key, KeyName } from './Key';
  * {@link selectLayoutById}.
  */
 export class KeyHandler {
-  private layout_: Layout = new SambhotaKeymapOneLayout();
+  private layout_: Layout = LayoutManager.getInstance().layouts[0];
 
   /**
    * Switches the active layout to the one identified by {@link id}.

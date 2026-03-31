@@ -137,13 +137,17 @@ export class KeyMapping {
     }
     let code = '';
     if (isShift) {
-      code = [...KeyMapping.upperKeyCodeAsciiMapping.entries()].find(
-        ([, value]) => value === ascii,
-      )?.[0] as string;
+      KeyMapping.upperKeyCodeAsciiMapping.forEach((value, key) => {
+        if (value === ascii && code === '') {
+          code = key;
+        }
+      });
     } else {
-      code = [...KeyMapping.lowerKeyCodeAsciiMapping.entries()].find(
-        ([, value]) => value === ascii,
-      )?.[0] as string;
+      KeyMapping.lowerKeyCodeAsciiMapping.forEach((value, key) => {
+        if (value === ascii && code === '') {
+          code = key;
+        }
+      });
     }
 
     return new Key(ascii, keyName, isShift, isCtrl, false, isAlt, isAlt, code);

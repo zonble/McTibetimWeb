@@ -1,4 +1,4 @@
-import { Key } from '../input_method';
+import { Key } from '../input_method/Key';
 import { InputState } from '../input_method/InputState';
 
 /**
