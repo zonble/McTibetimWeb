@@ -326,12 +326,14 @@ export default abstract class StackingLayout extends Layout {
     // Final M or N
     const [isSefffix, suffixIndex] = this.isSuffix(ascii);
     if (isSefffix) {
+      let codes: number[] = [];
       if (state instanceof StackingState) {
-        const coder = StackingLayout.FinalAddChars[suffixIndex];
-        const codes = state.utf16Code.concat(coder);
-        const buffer = String.fromCharCode(...codes);
-        stateCallback(new CommittingState(buffer));
+        codes = state.utf16Code;
       }
+      codes = codes.concat(StackingLayout.FinalAddChars[suffixIndex]);
+      const buffer = String.fromCharCode(...codes);
+      stateCallback(new CommittingState(buffer));
+
       return true;
     }
 
