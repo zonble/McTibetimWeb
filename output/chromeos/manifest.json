@@ -64,6 +64,6 @@
       "indicator": "ཀ"
     }
   ],
-  "permissions": ["input", "background", "storage"],
+  "permissions": ["input"],
   "host_permissions": ["<all_urls>"]
 }
