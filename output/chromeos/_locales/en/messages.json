@@ -3,28 +3,28 @@
     "message": "en"
   },
   "manifestName": {
-    "message": "McTibetim"
+    "message": "McTibetIM"
   },
   "manifestDesc": {
     "message": "Provide various Tibetan input methods"
   },
   "imeDzongkha": {
-    "message": "McTibetim (Dzongkha)"
+    "message": "McTibetIM (Dzongkha)"
   },
   "imeSambhotaKeymapOne": {
-    "message": "McTibetim (Sambhota Keymap One)"
+    "message": "McTibetIM (Sambhota Keymap One)"
   },
   "imeSambhotaKeymapTwo": {
-    "message": "McTibetim (Sambhota Keymap Two)"
+    "message": "McTibetIM (Sambhota Keymap Two)"
   },
   "imeTccKeyboardOne": {
-    "message": "McTibetim (TCC Keyboard One)"
+    "message": "McTibetIM (TCC Keyboard One)"
   },
   "imeTccKeyboardTwo": {
-    "message": "McTibetim (TCC Keyboard Two)"
+    "message": "McTibetIM (TCC Keyboard Two)"
   },
   "imeWylie": {
-    "message": "McTibetim (Wylie)"
+    "message": "McTibetIM (Wylie)"
   },
   "menuOptions": {
     "message": "Options"
