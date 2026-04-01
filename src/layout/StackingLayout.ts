@@ -178,22 +178,22 @@ export default abstract class StackingLayout extends Layout {
         keyNameUppered_.set(this.spaceKey, ' ');
         keyNameUppered_.set(' ', '་');
         this.consonantKeyMapping.forEach((key, index) => {
-          if (key === key.toLowerCase()) {
+          if (key === key.toUpperCase()) {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.ConsonantChars[index]));
           }
         });
         this.vowelKeyMapping.forEach((key, index) => {
-          if (key === key.toLowerCase()) {
+          if (key === key.toUpperCase()) {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.VowelChars[index]));
           }
         });
         this.suffixKeyMapping.forEach((key, index) => {
-          if (key === key.toLowerCase()) {
+          if (key === key.toUpperCase()) {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.FinalAddChars[index]));
           }
         });
         this.symbolKeyMapping.forEach((key, index) => {
-          if (key === key.toLowerCase()) {
+          if (key === key.toUpperCase()) {
             keyNameUppered_.set(key, String.fromCharCode(StackingLayout.SymbolChars[index]));
           }
         });
