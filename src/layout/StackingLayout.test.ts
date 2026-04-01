@@ -1,7 +1,7 @@
-import SambhotaKeymapOneLayout from './SambhotaKeymapOneLayout';
-import StackingLayout from './StackingLayout';
 import { CommittingState, EmptyState, StackingState } from '../input_method/InputState';
 import { Key, KeyName } from '../input_method/Key';
+import SambhotaKeymapOneLayout from './SambhotaKeymapOneLayout';
+import StackingLayout from './StackingLayout';
 
 describe('StackingLayout (via SambhotaKeymapOneLayout)', () => {
   let layout: SambhotaKeymapOneLayout;

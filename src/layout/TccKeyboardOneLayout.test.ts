@@ -1,7 +1,7 @@
-import TccKeyboardOneLayout from './TccKeyboardOneLayout';
-import StackingLayout from './StackingLayout';
 import { CommittingState, EmptyState } from '../input_method/InputState';
 import { Key, KeyName } from '../input_method/Key';
+import StackingLayout from './StackingLayout';
+import TccKeyboardOneLayout from './TccKeyboardOneLayout';
 
 describe('TccKeyboardOneLayout', () => {
   let layout: TccKeyboardOneLayout;

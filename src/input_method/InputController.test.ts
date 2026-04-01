@@ -1,7 +1,7 @@
 import InputController from './InputController';
-import { InputUI } from './InputUI';
 import { CommittingState, EmptyState, InputtingState } from './InputState';
-import { Key, KeyName } from './Key';
+import { InputUI } from './InputUI';
+import { Key } from './Key';
 import { KeyHandler } from './KeyHandler';
 import { KeyMapping } from './KeyMapping';
 

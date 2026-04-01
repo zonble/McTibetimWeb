@@ -1,5 +1,5 @@
-import { Key } from '../input_method';
 import { InputState } from '../input_method/InputState';
+import { Key } from '../input_method/Key';
 
 /**
  * Abstract base class for all keyboard layout implementations.

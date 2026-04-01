@@ -210,6 +210,7 @@ npm run eslint
 - Output folder: `output/pime/`
 - IME metadata lives in `output/pime/ime.json`
 - `build_pime.bat` builds the PIME bundle and copies it to `C:\Program Files (x86)\PIME\node\input_methods\mctibetim`
+- **Important Note**: PIME uses an older Node.js version, so `webpack.config.pime.js` requires additional configuration to ensure compatibility.
 
 ## Coding Guidance for Agents
 

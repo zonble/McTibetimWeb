@@ -1,6 +1,6 @@
-import DzongkhaLayout from './DzongkhaLayout';
 import { CommittingState, EmptyState } from '../input_method/InputState';
 import { Key, KeyName } from '../input_method/Key';
+import DzongkhaLayout from './DzongkhaLayout';
 
 describe('DzongkhaLayout', () => {
   let layout: DzongkhaLayout;

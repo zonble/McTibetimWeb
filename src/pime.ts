@@ -6,14 +6,15 @@
  * The main entrance of the IME for ChromeOS.
  */
 
-import { InputController } from './input_method';
-import { LayoutManager } from './layout';
-import { InputUI } from './input_method/InputUI';
-import { KeyFromKeyboardEvent, VK_Keys } from './pime_keys';
-import path from 'path';
-import fs from 'fs';
-import process from 'process';
 import child_process from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+
+import { InputController } from './input_method';
+import { InputUI } from './input_method/InputUI';
+import { LayoutManager } from './layout';
+import { KeyFromKeyboardEvent, VK_Keys } from './pime_keys';
 
 interface Settings {
   selected_layout: string;
@@ -238,16 +239,16 @@ class PimeMcTibetim {
         const tooltip = state.tooltip;
         let showMessage = {};
         let hideMessage = true;
-        if (tooltip) {
-          showMessage = { message: tooltip, duration: 3 };
-          hideMessage = false;
+        if (tooltip && !candidateList.length) {
+          candidateList.push(tooltip);
+          selectedIndex = -1;
         }
         const commitString = instance.uiState.commitString;
         instance.uiState = {
           commitString: commitString,
           compositionString: compositionString,
           compositionCursor: state.cursorIndex,
-          showCandidates: candidates.length > 0,
+          showCandidates: candidateList.length > 0,
           candidateList: candidateList,
           candidateCursor: selectedIndex,
           showMessage: showMessage,
@@ -316,7 +317,7 @@ class PimeMcTibetim {
    * @returns The custom UI response.
    */
   public customUiResponse(): any {
-    let fontSize = 12;
+    let fontSize = 24;
 
     return {
       openKeyboard: this.isOpened,

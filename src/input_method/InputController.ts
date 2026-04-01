@@ -5,6 +5,12 @@ import { Key } from './Key';
 import { KeyHandler } from './KeyHandler';
 import { KeyMapping } from './KeyMapping';
 
+/**
+ * Acts as the centralized coordinator for input method operations.
+ * 
+ * It manages the underlying input state, translates raw device events
+ * using a `KeyHandler`, mutates state, and updates the `InputUI` appropriately.
+ */
 export default class InputController {
   private state_: InputState = new EmptyState();
   private keyHandler_: KeyHandler = new KeyHandler();
@@ -14,6 +20,13 @@ export default class InputController {
     return this.state_;
   }
 
+  /**
+   * Returns display names for keys in the current layout and modifier state.
+   * @param shift Whether the Shift modifier is active.
+   * @param ctrl Whether the Control modifier is active.
+   * @param alt Whether the Alt modifier is active.
+   * @returns A map from key character to its Tibetan display name.
+   */
   getCurrentKeyNames(shift: boolean, ctrl: boolean, alt: boolean): Map<string, string> {
     return this.keyHandler_.getKeyNames(shift, ctrl, alt);
   }
@@ -43,6 +56,12 @@ export default class InputController {
     this.enterState(this.state_, new EmptyState());
   }
 
+  /**
+   * Switches the active keyboard layout to the one with the given identifier.
+   * 
+   * Active composition is committed and the controller is reset.
+   * @param id The layout identifier (e.g. 'wylie').
+   */
   selectLayoutById(id: string): void {
     this.keyHandler_.selectLayoutById(id);
     this.reset();
@@ -58,6 +77,14 @@ export default class InputController {
     return this.handle(key);
   }
 
+  /**
+   * Converts simple keyboard state into an internal Key and handles it.
+   * @param button The character button pressed.
+   * @param isShift Whether Shift is active.
+   * @param isCtrl Whether Control is active.
+   * @param isAlt Whether Alt is active.
+   * @returns True if the key was handled.
+   */
   handleSimpleKeyboardEvent(
     button: string,
     isShift: boolean,

@@ -1,149 +1,115 @@
 (function () {
   const { InputController, LayoutManager } = window.mctibetim;
 
-  function resetUI() {
-    document.getElementById('function').style.visibility = 'hidden';
-    document.getElementById('candidates').style.visibility = 'hidden';
-    let renderText = '';
-    renderText += "<span class='cursor'>|</span>";
-    document.getElementById('composing_buffer').innerHTML = renderText;
-    document.getElementById('candidates').innerHTML = '';
-    composingBuffer = '';
-    document.getElementById('tooltip').style.visibility = 'hidden';
-  }
+  let composingBuffer = '';
 
   function onChangeTable(value) {
     window.localStorage.setItem('selectedLayout', value);
     controller.selectLayoutById(value);
     controller.reset();
-    if (screenKeyboard) {
-      screenKeyboard.loadLayout();
-    }
+    screenKeyboard.loadLayout();
   }
 
-  let ui = (function () {
-    let that = {};
-    that.reset = resetUI;
-
-    function insertTextAtSelection(text) {
+  const ui = {
+    insertTextAtSelection(text) {
       const textArea = document.getElementById('text_area');
-      const selectionStart = textArea.selectionStart;
-      const selectionEnd = textArea.selectionEnd;
-      const currentText = textArea.value;
-      const head = currentText.substring(0, selectionStart);
-      const tail = currentText.substring(selectionEnd);
-
+      const { selectionStart, selectionEnd, value } = textArea;
+      const head = value.substring(0, selectionStart);
+      const tail = value.substring(selectionEnd);
       textArea.value = head + text + tail;
       const cursorPosition = head.length + text.length;
       textArea.setSelectionRange(cursorPosition, cursorPosition);
-    }
+    },
 
-    function removeTextBeforeSelection() {
+    removeTextBeforeSelection() {
       const textArea = document.getElementById('text_area');
-      const selectionStart = textArea.selectionStart;
-      const selectionEnd = textArea.selectionEnd;
-      const currentText = textArea.value;
-      const head = currentText.substring(0, selectionStart);
-      const tail = currentText.substring(selectionEnd);
-
+      const { selectionStart, selectionEnd, value } = textArea;
+      const head = value.substring(0, selectionStart);
+      const tail = value.substring(selectionEnd);
       textArea.value = head.substring(0, head.length - 1) + tail;
       const cursorPosition = Math.max(0, head.length - 1);
       textArea.setSelectionRange(cursorPosition, cursorPosition);
-    }
+    },
 
-    that.commitString = function (string) {
-      insertTextAtSelection(string);
+    reset() {
+      document.getElementById('function').style.visibility = 'hidden';
+      document.getElementById('candidates').style.visibility = 'hidden';
+      document.getElementById('composing_buffer').innerHTML = "<span class='cursor'>|</span>";
+      document.getElementById('candidates').innerHTML = '';
+      document.getElementById('tooltip').style.visibility = 'hidden';
       composingBuffer = '';
-    };
+    },
 
-    that.backspace = () => {
-      removeTextBeforeSelection();
+    commitString(string) {
+      this.insertTextAtSelection(string);
       composingBuffer = '';
-    };
+    },
 
-    that.update = function (string) {
-      let state = JSON.parse(string);
-      {
-        let buffer = state.composingBuffer;
-        let renderText = '<p>';
-        let plainText = '';
-        let i = 0;
-        for (let item of buffer) {
-          if (item.style === 'highlighted') {
-            renderText += '<span class="marking">';
-          }
-          let text = item.text;
-          plainText += text;
-          for (let c of text) {
-            if (i === state.cursorIndex) {
-              renderText += "<span class='cursor'>|</span>";
-            }
-            renderText += c;
-            i++;
-          }
-          if (item.style === 'highlighted') {
-            renderText += '</span>';
-          }
+    backspace() {
+      this.removeTextBeforeSelection();
+      composingBuffer = '';
+    },
+
+    update(string) {
+      const state = JSON.parse(string);
+
+      // Render composing buffer
+      let renderText = '<p>';
+      let plainText = '';
+      let i = 0;
+      for (const item of state.composingBuffer) {
+        if (item.style === 'highlighted') {
+          renderText += '<span class="marking">';
         }
-        if (i === state.cursorIndex) {
-          renderText += "<span class='cursor'>|</span>";
+        for (const c of item.text) {
+          if (i === state.cursorIndex) {
+            renderText += "<span class='cursor'>|</span>";
+          }
+          renderText += c;
+          i++;
         }
-        renderText += '</p>';
-        document.getElementById('composing_buffer').innerHTML = renderText;
-        composingBuffer = plainText;
+        plainText += item.text;
+        if (item.style === 'highlighted') {
+          renderText += '</span>';
+        }
       }
-
-      let candidates = state.candidates;
-      if (candidates === undefined) {
-        candidates = [];
+      if (i === state.cursorIndex) {
+        renderText += "<span class='cursor'>|</span>";
       }
+      renderText += '</p>';
+      document.getElementById('composing_buffer').innerHTML = renderText;
+      composingBuffer = plainText;
 
+      // Render candidates
+      const candidates = state.candidates ?? [];
       if (candidates.length) {
         let s = '<table>';
-        for (let candidate of state.candidates) {
-          if (candidate.selected) {
-            s += '<tr class="highlighted_candidate"> ';
-          } else {
-            s += '<tr>';
-          }
-          s += '<td class="keycap">';
-          s += candidate.keyCap;
-          s += '</td>';
-          s += '<td class="candidate">';
-          s += candidate.candidate.displayText;
-          s += '</td>';
-          s += '<td class="description">';
-          s += candidate.candidate.description;
-          s += '</td>';
+        for (const candidate of candidates) {
+          s += candidate.selected ? '<tr class="highlighted_candidate">' : '<tr>';
+          s += `<td class="keycap">${candidate.keyCap}</td>`;
+          s += `<td class="candidate">${candidate.candidate.displayText}</td>`;
+          s += `<td class="description">${candidate.candidate.description}</td>`;
           s += '</tr>';
         }
-        s += '<tr class="page_info"> ';
-        s += '<td colspan="2">';
-        s += 'Tab 補完單詞';
-        s += '</td>';
-        s += '<td colspan="1">';
-        // s += '' + (state.candidatePageIndex + 1) + ' / ' + state.candidatePageCount;
-        s += '</td>';
-        s += '</tr>';
+        s += '<tr class="page_info"><td colspan="2">Tab 補完單詞</td><td colspan="1"></td></tr>';
         s += '</table>';
-
         document.getElementById('candidates').innerHTML = s;
       }
-
       document.getElementById('candidates').style.visibility = candidates.length
         ? 'visible'
         : 'hidden';
 
+      // Render tooltip
+      const tooltipDiv = document.getElementById('tooltip');
       const tooltip = state.tooltip;
       if (tooltip && tooltip.length) {
-        const tooltipDiv = document.getElementById('tooltip');
         tooltipDiv.textContent = tooltip;
         tooltipDiv.style.visibility = 'visible';
       } else {
-        document.getElementById('tooltip').style.visibility = 'hidden';
+        tooltipDiv.style.visibility = 'hidden';
       }
 
-      document.getElementById('function').style.visibility = 'visible';
+      // Position function div near caret
       const textArea = document.getElementById('text_area');
       const functionDiv = document.getElementById('function');
       const editArea = document.getElementById('edit_area');
@@ -152,9 +118,8 @@
       const textAreaStyle = window.getComputedStyle(textArea);
       const lineHeight = parseInt(textAreaStyle.lineHeight) || 20;
 
-      // Create a temporary mirror div to measure actual caret position
       const mirror = document.createElement('div');
-      const styles = [
+      const mirrorStyleProps = [
         'fontFamily',
         'fontSize',
         'fontWeight',
@@ -167,54 +132,41 @@
         'boxSizing',
         'width',
       ];
-      styles.forEach((style) => {
-        mirror.style[style] = textAreaStyle[style];
-      });
+      for (const prop of mirrorStyleProps) {
+        mirror.style[prop] = textAreaStyle[prop];
+      }
       mirror.style.position = 'absolute';
       mirror.style.visibility = 'hidden';
       mirror.style.whiteSpace = 'pre-wrap';
       mirror.style.overflowWrap = 'break-word';
 
-      const caretPos = textArea.selectionStart;
-      const textBeforeCaret = textArea.value.substring(0, caretPos);
-      mirror.textContent = textBeforeCaret;
-
+      mirror.textContent = textArea.value.substring(0, textArea.selectionStart);
       const caretSpan = document.createElement('span');
       caretSpan.textContent = '|';
       mirror.appendChild(caretSpan);
-
       document.body.appendChild(mirror);
 
       const caretRect = caretSpan.getBoundingClientRect();
       const mirrorRect = mirror.getBoundingClientRect();
-
       const relativeTop = caretRect.top - mirrorRect.top;
       const relativeLeft = caretRect.left - mirrorRect.left;
-
       document.body.removeChild(mirror);
 
-      // Account for textarea scroll position
-      const scrollTop = textArea.scrollTop;
-      const scrollLeft = textArea.scrollLeft;
-
       functionDiv.style.position = 'absolute';
-      functionDiv.style.top =
-        rect.top - editAreaRect.top + relativeTop + lineHeight - scrollTop + 'px';
-      functionDiv.style.left = rect.left - editAreaRect.left + relativeLeft - scrollLeft + 'px';
-    };
+      functionDiv.style.top = `${
+        rect.top - editAreaRect.top + relativeTop + lineHeight - textArea.scrollTop
+      }px`;
+      functionDiv.style.left = `${
+        rect.left - editAreaRect.left + relativeLeft - textArea.scrollLeft
+      }px`;
+      functionDiv.style.visibility = 'visible';
+    },
+  };
 
-    return that;
-  })();
-
-  const controller = new InputController(ui);
+  // Initialize layout selector
   const manager = LayoutManager.getInstance();
   const layouts = manager.layouts;
-  let selectedLayout = window.localStorage.getItem('selectedLayout');
-
-  if (selectedLayout === undefined) {
-    selectedLayout = layouts[0].layoutId;
-  }
-  controller.selectLayoutById(selectedLayout);
+  const selectedLayout = window.localStorage.getItem('selectedLayout') ?? layouts[0].layoutId;
 
   const select = document.getElementById('input-table-select');
   select.innerHTML = '';
@@ -222,19 +174,20 @@
     const option = document.createElement('option');
     option.value = layout.layoutId;
     option.textContent = layout.layoutName;
-    if (selectedLayout === layout.layoutId) {
-      option.selected = true;
-    }
+    option.selected = selectedLayout === layout.layoutId;
     select.appendChild(option);
   }
-
   select.value = selectedLayout;
+
+  const controller = new InputController(ui);
+  controller.selectLayoutById(selectedLayout);
 
   select.addEventListener('change', (event) => {
     onChangeTable(event.target.value);
     document.getElementById('text_area').focus();
   });
 
+  // Textarea event handling
   const textarea = document.getElementById('text_area');
   let isComposing = false;
 
@@ -262,17 +215,17 @@
       controller.reset();
       return;
     }
-
-    let accepted = controller.handleKeyboardEvent(event);
-    if (accepted) {
+    if (controller.handleKeyboardEvent(event)) {
       event.preventDefault();
     }
   });
+
   textarea.addEventListener('blur', () => {
     controller.reset();
-    resetUI();
+    ui.reset();
   });
 
+  // Screen keyboard
   const screenKeyboard = (() => {
     const api = {
       isLock: false,
@@ -283,7 +236,7 @@
 
     const Keyboard = window.SimpleKeyboard.default;
     const keyboard = new Keyboard({
-      onKeyPress: (button) => handleKeyPress(button),
+      onKeyPress: handleKeyPress,
     });
 
     const defaultLayout = [
@@ -301,18 +254,17 @@
       '{ctrl} {space} {alt}',
     ];
 
+    const modifierKeys = {
+      '{lock}': 'isLock',
+      '{shift}': 'isShift',
+      '{ctrl}': 'isCtrl',
+      '{alt}': 'isAlt',
+    };
+
     function handleModifierButton(button) {
-      if (button === '{lock}') {
-        api.isLock = !api.isLock;
-      } else if (button === '{shift}') {
-        api.isShift = !api.isShift;
-      } else if (button === '{ctrl}') {
-        api.isCtrl = !api.isCtrl;
-      } else if (button === '{alt}') {
-        api.isAlt = !api.isAlt;
-      } else {
-        return false;
-      }
+      const key = modifierKeys[button];
+      if (!key) return false;
+      api[key] = !api[key];
       api.loadLayout();
       return true;
     }
@@ -328,9 +280,7 @@
     }
 
     function handleKeyPress(button) {
-      if (handleModifierButton(button)) {
-        return;
-      }
+      if (handleModifierButton(button)) return;
 
       const handled = controller.handleSimpleKeyboardEvent(
         button,
@@ -352,9 +302,8 @@
         api.isAlt = false;
         api.loadLayout();
       }
-      if (!handled) {
-        handleFallbackButton(button);
-      }
+
+      if (!handled) handleFallbackButton(button);
     }
 
     function buildKeyboardDisplay() {
@@ -370,27 +319,17 @@
         '{alt}': 'AltGr',
       };
       for (const [key, value] of names.entries()) {
-        if (display[key] === undefined) {
-          display[key] = value;
-        }
+        if (display[key] === undefined) display[key] = value;
       }
       return display;
     }
 
     function buildButtonTheme() {
       const buttonTheme = [];
-      if (api.isLock) {
-        buttonTheme.push({ class: 'hg-button-active', buttons: '{lock}' });
-      }
-      if (api.isShift) {
-        buttonTheme.push({ class: 'hg-button-active', buttons: '{shift}' });
-      }
-      if (api.isCtrl) {
-        buttonTheme.push({ class: 'hg-button-active', buttons: '{ctrl}' });
-      }
-      if (api.isAlt) {
-        buttonTheme.push({ class: 'hg-button-active', buttons: '{alt}' });
-      }
+      if (api.isLock) buttonTheme.push({ class: 'hg-button-active', buttons: '{lock}' });
+      if (api.isShift) buttonTheme.push({ class: 'hg-button-active', buttons: '{shift}' });
+      if (api.isCtrl) buttonTheme.push({ class: 'hg-button-active', buttons: '{ctrl}' });
+      if (api.isAlt) buttonTheme.push({ class: 'hg-button-active', buttons: '{alt}' });
       return buttonTheme;
     }
 

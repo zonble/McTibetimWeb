@@ -1,2 +1,2 @@
-export { default as LayoutManager } from './LayoutManager';
 export { default as Layout } from './Layout';
+export { default as LayoutManager } from './LayoutManager';

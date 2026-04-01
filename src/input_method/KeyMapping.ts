@@ -6,11 +6,6 @@ import { Key, KeyName } from './Key';
 export class KeyMapping {
   static readonly upperKeyCodeAsciiMapping = new Map<string, string>([
     ['Backquote', '~'],
-    ['Backslash', '|'],
-    ['BracketLeft', '{'],
-    ['BracketRight', '}'],
-    ['Comma', '<'],
-    ['Digit0', ')'],
     ['Digit1', '!'],
     ['Digit2', '@'],
     ['Digit3', '#'],
@@ -20,47 +15,47 @@ export class KeyMapping {
     ['Digit7', '&'],
     ['Digit8', '*'],
     ['Digit9', '('],
+    ['Digit0', ')'],
+    ['Minus', '_'],
     ['Equal', '+'],
-    ['KeyA', 'A'],
-    ['KeyB', 'B'],
-    ['KeyC', 'C'],
-    ['KeyD', 'D'],
+    ['KeyQ', 'Q'],
+    ['KeyW', 'W'],
     ['KeyE', 'E'],
+    ['KeyR', 'R'],
+    ['KeyT', 'T'],
+    ['KeyY', 'Y'],
+    ['KeyU', 'U'],
+    ['KeyI', 'I'],
+    ['KeyO', 'O'],
+    ['KeyP', 'P'],
+    ['BracketLeft', '{'],
+    ['BracketRight', '}'],
+    ['Backslash', '|'],
+    ['KeyA', 'A'],
+    ['KeyS', 'S'],
+    ['KeyD', 'D'],
     ['KeyF', 'F'],
     ['KeyG', 'G'],
     ['KeyH', 'H'],
-    ['KeyI', 'I'],
     ['KeyJ', 'J'],
     ['KeyK', 'K'],
     ['KeyL', 'L'],
-    ['KeyM', 'M'],
-    ['KeyN', 'N'],
-    ['KeyO', 'O'],
-    ['KeyP', 'P'],
-    ['KeyQ', 'Q'],
-    ['KeyR', 'R'],
-    ['KeyS', 'S'],
-    ['KeyT', 'T'],
-    ['KeyU', 'U'],
-    ['KeyV', 'V'],
-    ['KeyW', 'W'],
-    ['KeyX', 'X'],
-    ['KeyY', 'Y'],
-    ['KeyZ', 'Z'],
-    ['Minus', '_'],
-    ['Period', '>'],
-    ['Quote', '"'],
     ['Semicolon', ':'],
+    ['Quote', '"'],
+    ['KeyZ', 'Z'],
+    ['KeyX', 'X'],
+    ['KeyC', 'C'],
+    ['KeyV', 'V'],
+    ['KeyB', 'B'],
+    ['KeyN', 'N'],
+    ['KeyM', 'M'],
+    ['Comma', '<'],
+    ['Period', '>'],
     ['Slash', '?'],
   ]);
 
   static readonly lowerKeyCodeAsciiMapping = new Map<string, string>([
     ['Backquote', '`'],
-    ['Backslash', '\\'],
-    ['BracketLeft', '['],
-    ['BracketRight', ']'],
-    ['Comma', ','],
-    ['Digit0', '0'],
     ['Digit1', '1'],
     ['Digit2', '2'],
     ['Digit3', '3'],
@@ -70,40 +65,53 @@ export class KeyMapping {
     ['Digit7', '7'],
     ['Digit8', '8'],
     ['Digit9', '9'],
+    ['Digit0', '0'],
+    ['Minus', '-'],
     ['Equal', '='],
-    ['KeyA', 'a'],
-    ['KeyB', 'b'],
-    ['KeyC', 'c'],
-    ['KeyD', 'd'],
+    ['KeyQ', 'q'],
+    ['KeyW', 'w'],
     ['KeyE', 'e'],
+    ['KeyR', 'r'],
+    ['KeyT', 't'],
+    ['KeyY', 'y'],
+    ['KeyU', 'u'],
+    ['KeyI', 'i'],
+    ['KeyO', 'o'],
+    ['KeyP', 'p'],
+    ['BracketLeft', '['],
+    ['BracketRight', ']'],
+    ['Backslash', '\\'],
+    ['KeyA', 'a'],
+    ['KeyS', 's'],
+    ['KeyD', 'd'],
     ['KeyF', 'f'],
     ['KeyG', 'g'],
     ['KeyH', 'h'],
-    ['KeyI', 'i'],
     ['KeyJ', 'j'],
     ['KeyK', 'k'],
     ['KeyL', 'l'],
-    ['KeyM', 'm'],
-    ['KeyN', 'n'],
-    ['KeyO', 'o'],
-    ['KeyP', 'p'],
-    ['KeyQ', 'q'],
-    ['KeyR', 'r'],
-    ['KeyS', 's'],
-    ['KeyT', 't'],
-    ['KeyU', 'u'],
-    ['KeyV', 'v'],
-    ['KeyW', 'w'],
-    ['KeyX', 'x'],
-    ['KeyY', 'y'],
-    ['KeyZ', 'z'],
-    ['Minus', '-'],
-    ['Period', '.'],
-    ['Quote', '"'],
     ['Semicolon', ';'],
+    ['Quote', '"'],
+    ['KeyZ', 'z'],
+    ['KeyX', 'x'],
+    ['KeyC', 'c'],
+    ['KeyV', 'v'],
+    ['KeyB', 'b'],
+    ['KeyN', 'n'],
+    ['KeyM', 'm'],
+    ['Comma', ','],
+    ['Period', '.'],
     ['Slash', '/'],
   ]);
 
+  /**
+   * Translates simple virtual keyboard events into internal Key instances.
+   * @param button The character or key name pressed.
+   * @param isShift Whether Shift is pressed.
+   * @param isCtrl Whether Control is pressed.
+   * @param isAlt Whether Alt is pressed.
+   * @returns The generated Key instance.
+   */
   static keyFromSimpleKeyboardEvent(
     button: string,
     isShift: boolean,
@@ -137,13 +145,17 @@ export class KeyMapping {
     }
     let code = '';
     if (isShift) {
-      code = [...KeyMapping.upperKeyCodeAsciiMapping.entries()].find(
-        ([, value]) => value === ascii,
-      )?.[0] as string;
+      KeyMapping.upperKeyCodeAsciiMapping.forEach((value, key) => {
+        if (value === ascii && code === '') {
+          code = key;
+        }
+      });
     } else {
-      code = [...KeyMapping.lowerKeyCodeAsciiMapping.entries()].find(
-        ([, value]) => value === ascii,
-      )?.[0] as string;
+      KeyMapping.lowerKeyCodeAsciiMapping.forEach((value, key) => {
+        if (value === ascii && code === '') {
+          code = key;
+        }
+      });
     }
 
     return new Key(ascii, keyName, isShift, isCtrl, false, isAlt, isAlt, code);

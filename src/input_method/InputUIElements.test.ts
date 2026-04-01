@@ -1,6 +1,6 @@
 import { Candidate } from './Candidate';
-import { InputUIStateBuilder } from './InputUIElements';
 import { StackingState, WylieInputtingState } from './InputState';
+import { InputUIStateBuilder } from './InputUIElements';
 
 describe('InputUIStateBuilder', () => {
   describe('build', () => {

@@ -1,6 +1,6 @@
-import { KeyHandler } from './KeyHandler';
 import { EmptyState, StackingState } from './InputState';
 import { Key, KeyName } from './Key';
+import { KeyHandler } from './KeyHandler';
 
 describe('KeyHandler', () => {
   let handler: KeyHandler;

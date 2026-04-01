@@ -1,5 +1,5 @@
-import { KeyFromKeyboardEvent, VK_Keys } from './pime_keys';
 import { KeyName } from './input_method/Key';
+import { KeyFromKeyboardEvent, VK_Keys } from './pime_keys';
 
 /**
  * Helper to build a keyStates array (256 bytes) with optional modifier bits.

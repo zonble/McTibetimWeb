@@ -124,6 +124,14 @@ export function KeyFromKeyboardEvent(event: KeyboardEvent) {
   return KeyMapping.keyFromKeyboardEvent(event);
 }
 
+/**
+ * Converts a simple virtual keyboard event into the internal Key representation.
+ * @param button The button identifier or character.
+ * @param isShift Whether Shift is pressed.
+ * @param isCtrl Whether Control is pressed.
+ * @param isAlt Whether Alt is pressed.
+ * @returns The converted input-method key.
+ */
 export function KeyFromSimpleKeyboardEvent(
   button: string,
   isShift: boolean,

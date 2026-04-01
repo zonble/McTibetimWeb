@@ -1,8 +1,18 @@
 import { CommittingState, InputState } from '../input_method/InputState';
+import { Key, KeyName } from '../input_method/Key';
+import { KeyMapping } from '../input_method/KeyMapping';
 import Layout from './Layout';
-import { Key, KeyMapping } from '../input_method';
-import { KeyName } from '../input_method/Key';
 
+/**
+ * Implements the Dzongkha keyboard layout.
+ *
+ * Originating from the Dzongkha Development Commission, this is the official
+ * standardized keyboard layout of Bhutan. It is primarily used by the people
+ * of Bhutan and those writing in Dzongkha. Because the language requires a
+ * massive number of characters, consonants, and symbols, this layout utilizes
+ * four layers (Normal, Shift, Alt, Shift+Alt) to map everything onto a standard
+ * keyboard.
+ */
 export default class DzongkhaLayout implements Layout {
   readonly layoutId = 'dzongkha';
   readonly layoutName = 'Dzongkha';

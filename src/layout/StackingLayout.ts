@@ -1,4 +1,3 @@
-import { Key } from '../input_method';
 import {
   CommittingState,
   EmptyState,
@@ -6,7 +5,7 @@ import {
   InputtingState,
   StackingState,
 } from '../input_method/InputState';
-import { KeyName } from '../input_method/Key';
+import { Key, KeyName } from '../input_method/Key';
 import Layout from './Layout';
 
 /**

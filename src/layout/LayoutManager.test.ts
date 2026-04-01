@@ -1,5 +1,5 @@
-import LayoutManager from './LayoutManager';
 import DzongkhaLayout from './DzongkhaLayout';
+import LayoutManager from './LayoutManager';
 import SambhotaKeymapOneLayout from './SambhotaKeymapOneLayout';
 import SambhotaKeymapTwoLayout from './SambhotaKeymapTwoLayout';
 import TccKeyboardOneLayout from './TccKeyboardOneLayout';
