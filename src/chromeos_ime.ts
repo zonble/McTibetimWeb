@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2025 and onwards The McTibetim Authors.
+ * Copyright (c) 2026 and onwards The McTibetim Authors.
  * This code is released under the MIT license.
  * SPDX-License-Identifier: MIT
  * The main entrance of the IME for ChromeOS.
@@ -8,7 +8,6 @@
 
 import { InputController } from './input_method';
 import { Key, KeyName } from './input_method/Key';
-
 
 /**
  * The main class for the mctibetim IME on ChromeOS.
@@ -25,7 +24,7 @@ class ChromeMcTibetim {
   constructor() {
     // chrome.i18n.getAcceptLanguages((langs) => {});
     this.inputController = new InputController(this.makeUI());
-    this.inputController.onError = () => { };
+    this.inputController.onError = () => {};
   }
 
   /**
@@ -45,7 +44,6 @@ class ChromeMcTibetim {
         style: 'check' as const,
       },
     ];
-
 
     chrome.input.ime.setMenuItems({ engineID: this.engineID, items: menus });
   }
@@ -121,7 +119,7 @@ class ChromeMcTibetim {
               visible: false,
             },
           });
-        } catch (e) { }
+        } catch (e) {}
       },
 
       commitString: (text: string) => {
@@ -237,7 +235,7 @@ class ChromeMcTibetim {
               cursorVisible: false,
               // Use "cursor" positioning for tooltips so that the candidate
               // window appears near the text cursor..
-              windowPosition: "cursor",
+              windowPosition: 'cursor',
               pageSize: 1, // pageSize has to be at least 1 otherwise ChromeOS crashes.
             },
           });
@@ -318,9 +316,7 @@ chrome.input?.ime.onKeyEvent.addListener((engineID, keyData) => {
   return chromeMcTibetim.inputController.handle(keyEvent);
 });
 
-chrome.input.ime.onCandidateClicked.addListener((engineID, candidateID, button) => {
-
-});
+chrome.input.ime.onCandidateClicked.addListener((engineID, candidateID, button) => {});
 
 chrome.input?.ime.onMenuItemActivated.addListener((engineID, name) => {
   switch (name) {
@@ -338,7 +334,6 @@ chrome.input?.ime.onMenuItemActivated.addListener((engineID, name) => {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // console.log(request);
-
 });
 
 chrome.runtime.onConnect.addListener((port) => {
@@ -369,7 +364,7 @@ async function keepAlive() {
       await chrome.scripting.executeScript(args);
       chrome.tabs.onUpdated.removeListener(retryOnTabUpdate);
       return;
-    } catch (e) { }
+    } catch (e) {}
   }
   chrome.tabs.onUpdated.addListener(retryOnTabUpdate);
 }
@@ -383,7 +378,6 @@ async function retryOnTabUpdate(
     keepAlive();
   }
 }
-
 
 keepAlive();
 

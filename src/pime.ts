@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2025 and onwards The McTibetim Authors.
+ * Copyright (c) 2026 and onwards The McTibetim Authors.
  * This code is released under the MIT license.
  * SPDX-License-Identifier: MIT
  * The main entrance of the IME for ChromeOS.
