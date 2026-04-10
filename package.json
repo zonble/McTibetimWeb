@@ -3,7 +3,7 @@
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-typescript": "^7.28.5",
-    "@types/chrome": "^0.1.38",
+    "@types/chrome": "^0.1.40",
     "@types/eslint": "^9.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
@@ -67,7 +67,7 @@
     "assert": false
   },
   "dependencies": {
-    "@types/chrome": "^0.1.38",
+    "@types/chrome": "^0.1.40",
     "core-js": "^3.49.0",
     "tibetan-ewts-converter": "^2.0.0"
   }
