@@ -84,6 +84,7 @@ module.exports = {
                 target: 'es5',
                 module: 'commonjs',
                 downlevelIteration: true,
+                ignoreDeprecations: '6.0',
               },
             },
           },
