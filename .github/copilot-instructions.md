@@ -14,7 +14,7 @@ The project is now layout-driven. Input behavior lives in `src/layout/`, while t
 
 ## Current Technology Stack
 
-- Language: TypeScript 5
+- Language: TypeScript 6
 - Package manager: npm with `package-lock.json`
 - Build tooling: Webpack 5 with `ts-loader`
 - Testing: Jest 30 with `ts-jest` and `jsdom`
